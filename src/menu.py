@@ -1,17 +1,9 @@
-
 # -*- coding: utf-8 -*-
-#open folder button
-#2. pic inside: display pic, ask for dimensions and colors and create empty .steps
-#3. pic and .steps inside: display pic, or lines with slider and step forward/backward, pic-lines with slider
-#   button for more steps in background
-#reload content button
-
 #!/usr/bin/env python
 import Tkinter as tk
 import tkFileDialog as file_dialog
 import rgb, display, json_read_write
 from tkintertable import TableCanvas, TableModel
-import random
 
 
 class Application(tk.Frame):
@@ -51,7 +43,7 @@ class Application(tk.Frame):
                 #TODO: Pop-up menu showing the picture and updating the nailx/naily
                 print "JSON creation not supported yet"
                 return
-            print "File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file
+            raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
         else:
             print "No file chosen"
 
