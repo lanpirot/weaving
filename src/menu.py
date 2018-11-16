@@ -47,6 +47,7 @@ class Application(tk.Frame):
             if self.file.partition(".")[2].lower() == "json":
                 self.json_file = self.file
                 (self.nailsx, self.nailsy, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(self.json_file)
+                self.reload_button.config(state=tk.ACTIVE)
                 self.reload()
                 return
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
@@ -124,9 +125,9 @@ class Application(tk.Frame):
         self.quit_button.grid(column=0, row=2, padx=10)
         self.open_dialog_button = tk.Button(self, text='Open file', command=self.open_file)
         self.open_dialog_button.grid(column=1, row=2, padx=10)
-        self.reload_button = tk.Button(self, text="Reload", command=self.reload)
+        self.reload_button = tk.Button(self, text="Reload", command=self.reload, state=tk.DISABLED)
         self.reload_button.grid(column=2, row=2, padx=10)
-        self.start_button = tk.Button(self, text="Start/Continue weaving", command=self.start, bg=self.quargreen, activebackground=self.halfgreen)
+        self.start_button = tk.Button(self, text="Start/Continue weaving", command=self.start, bg=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
         self.start_button.grid(column=3, row=2, padx=10)
         
     
