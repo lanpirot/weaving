@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 #open folder button
 #2. pic inside: display pic, ask for dimensions and colors and create empty .steps
@@ -41,7 +42,7 @@ class Application(tk.Frame):
 
     
     def open_file(self):
-        self.file = file_dialog.askopenfilename(title='Choose picture to weave or finished weaving.json',filetypes=[("JSON","*.json"),("JSON","*.JSON"),("JPG","*.JPG"),("JPG","*.jpeg"),("JPG","*.jpg")], initialdir="../weaves/example")
+        self.file = file_dialog.askopenfilename(title='Choose picture to weave or finished weaving.json',filetypes=[("JSON","*.json"),("JSON","*.JSON"),("JPG","*.JPG"),("JPG","*.jpeg"),("JPG","*.jpg")], initialdir="weaves/example")
         if self.file:
             if self.file.partition(".")[2].lower() == "json":
                 self.json_file = self.file
