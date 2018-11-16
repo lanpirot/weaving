@@ -1,0 +1,5 @@
+#exclude non-python sources
+*.pyc
+#exclude directories with other examples
+/misc/
+/pictures/
