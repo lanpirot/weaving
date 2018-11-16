@@ -8,10 +8,8 @@
 
 #!/usr/bin/env python
 import Tkinter as tk
-from PIL import Image, ImageTk
 import tkFileDialog as file_dialog
-import rgb
-import json_read_write
+import rgb, display, json_read_write
 
 
 
@@ -31,8 +29,6 @@ class Application(tk.Frame):
         self.green = "#00FF00"
         self.halfgreen = rgb.halfway(self.main_color, self.green)
         self.quargreen = rgb.halfway(self.main_color, self.halfgreen)
-        self.border_width = 40
-        self.tick_length = 3
         #standard values of the picture and the weaving
         self.nailsx = 100
         self.nailsy = 100
@@ -48,7 +44,8 @@ class Application(tk.Frame):
                 self.json_file = self.file
                 (self.nailsx, self.nailsy, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(self.json_file)
                 self.reload_button.config(state=tk.ACTIVE)
-                self.reload()
+                self.nails = []
+                display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
                 return
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
                 self.picture_file = self.file
@@ -59,66 +56,11 @@ class Application(tk.Frame):
         else:
             print "No file chosen"
     
-    def reload(self):
- 	self.my_image = Image.open(self.picture_file)
- 	self.my_photo = ImageTk.PhotoImage(image=self.my_image)
-        self.steps = []
-        self.clear_load_canvasses()
-
-    
-    def put_photo_on_canvasses(self):
-        for e, c in enumerate([self.canvas_pic, 0, self.canvas_neg]):
-            if not c:
-                continue
-            c.destroy()
-            c = tk.Canvas(self, bg="white", height = self.my_image.height+2*self.border_width, width = self.my_image.width+2*self.border_width)
-	    c.create_image((self.border_width,self.border_width), image=self.my_photo, anchor=tk.NW)
-	    c. grid(column = e, row = 0)
-	    if e == 0:
-	        self.canvas_pic = c
-	    else:
-	        self.canvas_neg = c
-    
-    def draw_ticks(self, c, startx, starty, movex, movey, tickdx, tickdy):
-        if movex:
-            steps = self.nailsx
-            scale = float(self.my_image.width) / steps
-        else:
-            steps = self.nailsy
-            scale = float(self.my_image.height) / steps
-        for scalar in xrange(steps):
-        	s = int(scale * scalar)
-        	tickx, ticky = startx + movex*s, starty + movey*s
-        	self.steps.append((scalar, tickx, ticky))
-        	c.create_line(tickx, ticky, tickx+self.tick_length*tickdx, ticky+self.tick_length*tickdy)
-        	if scalar % 5 == 0:
-        		c.create_line(tickx, ticky, tickx+2*self.tick_length*tickdx, ticky+2*self.tick_length*tickdy)
-        		c.create_text(tickx+6*self.tick_length*tickdx, ticky+6*self.tick_length*tickdy, text=str(scalar))
-    
-    def draw_border(self):
-        height, width = self.my_image.height, self.my_image.width
-        border = self.border_width
-        for c in [self.canvas_pic, self.canvas_pos, self.canvas_neg]:
-            c.create_line(border, border, width+border, border, width+border, height+border, border, height+border, border, border)
-            self.draw_ticks(c, border, border, 1, 0, 0, -1)
-            self.draw_ticks(c, width+border, border, 0, 1, 1, 0)
-            self.draw_ticks(c, border+width, border+height, -1, 0, 0, 1)
-            self.draw_ticks(c, border, height+border, 0, -1, -1, 0)
-
-    
-    def clear_load_canvasses(self):
- 	self.put_photo_on_canvasses()
- 	self.canvas_pos.destroy()
- 	self.canvas_pos = tk.Canvas(self, bg="white", height = self.my_image.height+2*self.border_width, width = self.my_image.width+2*self.border_width)
-	self.canvas_pos. grid(column = 1, row = 0)
-	self.draw_border()
-    
     def start(self):
-        i = 1
-        while True:
-            print i
-            i += 1
-        return
+        pass
+    
+    def reload(self):
+        pass
     
     def place_buttons(self):
         self.quit_button = tk.Button(self, text='Quit', command=self.quit, bg=self.quarred, activebackground=self.halfred)
@@ -141,7 +83,7 @@ class Application(tk.Frame):
         #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
         
     def moved(self, pos):
-        #TODO: update pictures to new scroll_bar position
+        #TODO: update sheet to new scroll_bar position
         return    
         
     def place_scroll_bar(self):
