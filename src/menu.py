@@ -91,7 +91,7 @@ class Application(tk.Frame):
             self.table.model.setValueAt(nail2[0][0], e, 2)
             self.table.model.setValueAt(nail2[0][1], e, 3)
         self.table.adjustColumnWidths()
-        #self.table.autoResizeColumns()
+        self.table.autoResizeColumns()
         self.table.redrawVisible()
         self.steps = new_steps
         
