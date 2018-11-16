@@ -3,3 +3,4 @@
 #exclude directories with other examples
 /misc/
 /pictures/
+*.backup
