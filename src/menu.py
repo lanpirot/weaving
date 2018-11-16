@@ -89,7 +89,7 @@ class Application(tk.Frame):
             self.table.model.setValueAt(nail1[0][0], e, 0)
             self.table.model.setValueAt(nail1[0][1], e, 1)
             self.table.model.setValueAt(nail2[0][0], e, 2)
-            self.table.model.setValueAt(nail2[0][1], e, 3)
+            self.table.model.setValueAt(nail2[0][1].lower(), e, 3)
         self.table.adjustColumnWidths()
         self.table.autoResizeColumns()
         self.table.redrawVisible()
@@ -118,15 +118,15 @@ class Application(tk.Frame):
         #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
     
     def place_table(self):
-        self.tframe = tk.Frame(self, width=500, height=130)
+        self.tframe = tk.Frame(self, width=460, height=130)
         self.tframe.grid(column=0, row = 1, columnspan=3)
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True)
         self.table.show()
-        self.table.addColumn(newname="nail # from")
-        self.table.addColumn(newname="direction from")
-        self.table.addColumn(newname="nail # to")
-        self.table.addColumn(newname="direction to")
+        self.table.addColumn(newname="From")
+        self.table.addColumn(newname="NESW")
+        self.table.addColumn(newname="to")
+        self.table.addColumn(newname="nesw")
 
     def create_widgets(self):
         self.place_canvasses()
