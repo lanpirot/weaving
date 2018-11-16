@@ -65,7 +65,9 @@ class Application(tk.Frame):
         #read (new) .json_file
         #load the three canvasses
         #update table content
+        self.table.model.deleteRows(xrange(len(self.steps)))
         self.json_file = json_file
+        self.reload_table(0)
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
         display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
@@ -74,20 +76,22 @@ class Application(tk.Frame):
             self.canvas_pos.create_line(stepnail1[1][0], stepnail1[1][1], stepnail2[1][0], stepnail2[1][1])
         self.reload_button.config(state=tk.ACTIVE)
     
-    def reload(self):
+    def reload_table(self, already_loaded=-1):
         #if thread is running dump it into .json_file
         #read .json_file
         #update table content
+        if already_loaded < 0:
+            already_loaded = len(self.steps)
         new_steps = json_read_write.get_steps(self.json_file)
-        for e, row in enumerate(new_steps[:]):
+        for e, row in enumerate(new_steps[already_loaded:]):
             r = self.table.addRow(key="Step "+str(e+1))
             nail1, nail2 = row
             self.table.model.setValueAt(nail1[0][0], e, 0)
             self.table.model.setValueAt(nail1[0][1], e, 1)
             self.table.model.setValueAt(nail2[0][0], e, 2)
             self.table.model.setValueAt(nail2[0][1], e, 3)
-        #self.table.redrawTable()
-        self.table.autoResizeColumns()
+        self.table.adjustColumnWidths()
+        #self.table.autoResizeColumns()
         self.table.redrawVisible()
         self.steps = new_steps
         
@@ -98,7 +102,7 @@ class Application(tk.Frame):
         self.quit_button.grid(column=0, row=2, padx=self.button_padding)
         self.open_dialog_button = tk.Button(self, text='Open file', command=self.open_file)
         self.open_dialog_button.grid(column=1, row=2, padx=self.button_padding)
-        self.reload_button = tk.Button(self, text="Reload", command=self.reload, state=tk.DISABLED)
+        self.reload_button = tk.Button(self, text="Reload table", command=self.reload_table, state=tk.DISABLED)
         self.reload_button.grid(column=2, row=2, padx=self.button_padding)
         self.start_button = tk.Button(self, text="Start/Continue weaving", command=self.start, bg=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
         self.start_button.grid(column=3, row=2, padx=self.button_padding)
@@ -119,9 +123,9 @@ class Application(tk.Frame):
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True)
         self.table.show()
-        self.table.addColumn(newname="Nail # from")
+        self.table.addColumn(newname="nail # from")
         self.table.addColumn(newname="direction from")
-        self.table.addColumn(newname="Nail # to")
+        self.table.addColumn(newname="nail # to")
         self.table.addColumn(newname="direction to")
 
     def create_widgets(self):
