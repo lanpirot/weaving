@@ -7,3 +7,10 @@ This is complete work in progress and should not be touched yet.
 ## Usage
 
 `python src/menu.py`
+
+## Necessary Packages
+
+- Tkinter
+- tkintertable
+- ImageTk
+- Pillow
