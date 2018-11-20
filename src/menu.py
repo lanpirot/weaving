@@ -44,8 +44,6 @@ class Application(tk.Frame):
                 print "JSON creation not supported yet"
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
-        else:
-            print "No file chosen"
 
         #json_read_write.update_steps(self.file, self.steps)
     
