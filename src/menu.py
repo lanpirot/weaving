@@ -61,9 +61,11 @@ class Application(tk.Frame):
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
         display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
-        for s in xrange(self.steps_done):
-            stepnail1, stepnail2 = self.steps[s]
-            self.canvas_pos.create_line(stepnail1[1][0], stepnail1[1][1], stepnail2[1][0], stepnail2[1][1])
+        display.draw_lines(self.steps.done)
+        
+#        for s in xrange(self.steps_done):
+#            stepnail1, stepnail2 = self.steps[s]
+#            self.canvas_pos.create_line(stepnail1[1][0], stepnail1[1][1], stepnail2[1][0], stepnail2[1][1])
         self.reload_button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
