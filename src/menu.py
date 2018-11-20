@@ -61,7 +61,7 @@ class Application(tk.Frame):
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
         display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
-        display.draw_lines(self.steps.done)
+        display.draw_lines(self.steps)
         
 #        for s in xrange(self.steps_done):
 #            stepnail1, stepnail2 = self.steps[s]
