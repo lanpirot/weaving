@@ -53,29 +53,30 @@ def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, n
         my_image_blank = canvasses[1][1].copy()
         my_image_source = canvasses[0][1].copy()
 
-def clear_load_canvasses(master_app, nailsx, nailsy, nails):
-    put_photo_on_canvasses()
-    draw_border(nailsx, nailsy, nails)
+def clear_load_canvasses(nailsx, nailsy, nails):
+    for c in canvasses:
+        put_photo_on_canvasses(c)
+        draw_border(c, nailsx, nailsy, nails)
+        photos[c[2]] = ImageTk.PhotoImage(image=c[1])
+        c[0].create_image((0, 0), image=photos[e], anchor=tk.NW, tags="image")
     
-def put_photo_on_canvasses():
-    for e, c in enumerate(canvasses):
-        c[0].delete("all")
-        photo = photos[c[2]]
-        c[0].configure(height = photo.height(), width = photo.width())
+def put_photo_on_canvasses(c):
+    c[0].delete("all")
+    photo = photos[c[2]]
+    c[0].configure(height = photo.height(), width = photo.width())
         
 
-def draw_border(nailsx, nailsy, nails):
-    height, width = photos[0].height(), photos[0].width()
+def draw_border(c, nailsx, nailsy, nails):
+    height, width = photos[c[2]].height(), photos[c[2]].width()
     border = border_width
-    for e, c in enumerate(canvasses):
-        image_draw = ImageDraw.Draw(c[1])
-        image_draw.line([(border, border), (width-border, border), (width-border, height-border), (border, height-border), (border, border)], fill="black")
-        draw_ticks(image_draw, e, border, border, 1, 0, 0, -1, nailsx, nailsy, nails)
-        draw_ticks(image_draw, e, width-border, border, 0, 1, 1, 0, nailsx, nailsy, nails)
-        draw_ticks(image_draw, e, width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
-        draw_ticks(image_draw, e, border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
-        photos[e] = ImageTk.PhotoImage(image=c[1])
-        c[0].create_image((0, 0), image=photos[e], anchor=tk.NW, tags="image")
+    
+    image_draw = ImageDraw.Draw(c[1])
+    image_draw.line([(border, border), (width-border, border), (width-border, height-border), (border, height-border), (border, border)], fill="black")
+    draw_ticks(image_draw, e, border, border, 1, 0, 0, -1, nailsx, nailsy, nails)
+    draw_ticks(image_draw, e, width-border, border, 0, 1, 1, 0, nailsx, nailsy, nails)
+    draw_ticks(image_draw, e, width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
+    draw_ticks(image_draw, e, border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
+        
 
 def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
     border = border_width
