@@ -23,7 +23,6 @@ def get_dir(a, b):
 #after the picture was already loaded once, and we need to reset to the very beginning
 def reload_from_start():
     for c in canvasses:
-        c[0].delete("all")
         if c[2] != 1:
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
             canvasses[c[2]] = (c[0], my_image_source.copy(), c[2])
@@ -31,8 +30,7 @@ def reload_from_start():
             print type(my_image_blank), my_image_blank
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_blank)
             canvasses[c[2]] = (c[0], my_image_blank.copy(), c[2])
-        #c[0].
-        c[0].create_image((0,0), image=photos[c[2]], anchor=tk.NW, tags="image")
+        c[0].itemconfigure('image', image=photos[c[2]])
         
 #load new picture from very start
 def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, nailsy, nails):
@@ -64,7 +62,7 @@ def put_photo_on_canvasses():
         c[0].delete("all")
         photo = photos[c[2]]
         c[0].configure(height = photo.height(), width = photo.width())
-        c[0].create_image((0, 0), image=photo, anchor=tk.NW, tags="image")
+        
 
 def draw_border(nailsx, nailsy, nails):
     height, width = photos[0].height(), photos[0].width()
@@ -77,7 +75,7 @@ def draw_border(nailsx, nailsy, nails):
         draw_ticks(image_draw, e, width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
         draw_ticks(image_draw, e, border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
         photos[e] = ImageTk.PhotoImage(image=c[1])
-        c[0].itemconfigure('image', image=photos[e])
+        c[0].create_image((0, 0), image=photos[e], anchor=tk.NW, tags="image")
 
 def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
     border = border_width
@@ -118,4 +116,4 @@ def draw_line((nail1, nail2), draw, pos_neg):
     if pos_neg:
         draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
     else:
-        draw.line([(x1, y1), (x2, y2)], (255,255,255,30))
+        draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
