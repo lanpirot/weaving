@@ -86,6 +86,7 @@ class Application(tk.Frame):
         self.steps = new_steps
         
         
+        
     
     def place_buttons(self):
         self.quit_button = tk.Button(self, text='Quit', command=self.quit, bg=self.quarred, activebackground=self.halfred)

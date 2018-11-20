@@ -5,8 +5,8 @@ border_width = 40
 tick_length = 3
 canvasses = [0, 1, 2]
 photos = [0, 1, 2]
-my_image_source = 0
-my_image_blank = 0
+my_image_source = -3
+my_image_blank = -6
 
 directions = dict()
 directions["N"] = (0,-1)
@@ -22,19 +22,20 @@ def get_dir(a, b):
 
 #after the picture was already loaded once, and we need to reset to the very beginning
 def reload_from_start():
-    for c in xrange(len(canvasses)):
+    for c in canvasses:
         c[0].delete("all")
         if c[2] != 1:
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
             canvasses[c[2]] = (c[0], my_image_source.copy(), c[2])
         else:
+            print type(my_image_blank), my_image_blank
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_blank)
             canvasses[c[2]] = (c[0], my_image_blank.copy(), c[2])
-        c[0].create_image((0,0), image=photo[c[2]], anchor=tk.NW, tags="image")
+        c[0].create_image((0,0), image=photos[c[2]], anchor=tk.NW, tags="image")
         
 
 def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, nailsy, nails):
-    global canvasses, my_image_source
+    global canvasses, my_image_source, my_image_blank
     cs = (canvas_pic, canvas_pos, canvas_neg)
     with Image.open(picture_file) as img:
         my_image_blank = Image.new("RGBA", (img.width + 2*border_width, img.height + 2*border_width))
@@ -52,14 +53,17 @@ def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, n
         #these images can now be reused, for drawing purposes from the very start
         my_image_blank = canvasses[1][1].copy()
         my_image_source = canvasses[0][1].copy()
+
+def clear_load_canvasses(master_app, nailsx, nailsy, nails):
+    put_photo_on_canvasses(master_app)
+    draw_border(nailsx, nailsy, nails)
     
-def put_photo_on_canvasses(master_app, canvasses):
+def put_photo_on_canvasses(master_app):
     for e, c in enumerate(canvasses):
         c[0].delete("all")
         photo = photos[c[2]]
         c[0].configure(height = photo.height(), width = photo.width())
         c[0].create_image((0, 0), image=photo, anchor=tk.NW, tags="image")
-        #c[0].grid(column = e*2, row = 0)
     
 def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
     border = border_width
@@ -99,12 +103,3 @@ def draw_border(nailsx, nailsy, nails):
         draw_ticks(image_draw, app, border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
         photos[e] = ImageTk.PhotoImage(image=c[1])
         c[0].itemconfigure('image', image=photos[e])
-        
-
-    
-def clear_load_canvasses(master_app, nailsx, nailsy, nails):
-    put_photo_on_canvasses(master_app, (canvasses[0], canvasses[2]))
-    canvasses[1][0].delete("all")
-    canvasses[1][0].configure(height = my_image_source.height, width = my_image_source.width)
-    canvasses[1][0].create_image((0, 0), image=photos[1], anchor=tk.NW, tags="image")
-    draw_border(nailsx, nailsy, nails)
