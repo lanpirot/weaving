@@ -48,7 +48,7 @@ def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, n
             else:
                 photos[e] = ImageTk.PhotoImage(image=my_image_blank)
                 canvasses[e] = (cs[e], my_image_blank.copy(), e)
-        clear_load_canvasses(master_app, nailsx, nailsy, nails)
+        clear_load_canvasses(nailsx, nailsy, nails)
         #these images can now be reused, for drawing purposes from the very start
         my_image_blank = canvasses[1][1].copy()
         my_image_source = canvasses[0][1].copy()
@@ -58,7 +58,7 @@ def clear_load_canvasses(nailsx, nailsy, nails):
         put_photo_on_canvasses(c)
         draw_border(c, nailsx, nailsy, nails)
         photos[c[2]] = ImageTk.PhotoImage(image=c[1])
-        c[0].create_image((0, 0), image=photos[e], anchor=tk.NW, tags="image")
+        c[0].create_image((0, 0), image=photos[c[2]], anchor=tk.NW, tags="image")
     
 def put_photo_on_canvasses(c):
     c[0].delete("all")
@@ -72,10 +72,10 @@ def draw_border(c, nailsx, nailsy, nails):
     
     image_draw = ImageDraw.Draw(c[1])
     image_draw.line([(border, border), (width-border, border), (width-border, height-border), (border, height-border), (border, border)], fill="black")
-    draw_ticks(image_draw, e, border, border, 1, 0, 0, -1, nailsx, nailsy, nails)
-    draw_ticks(image_draw, e, width-border, border, 0, 1, 1, 0, nailsx, nailsy, nails)
-    draw_ticks(image_draw, e, width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
-    draw_ticks(image_draw, e, border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
+    draw_ticks(image_draw, c[2], border, border, 1, 0, 0, -1, nailsx, nailsy, nails)
+    draw_ticks(image_draw, c[2], width-border, border, 0, 1, 1, 0, nailsx, nailsy, nails)
+    draw_ticks(image_draw, c[2], width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
+    draw_ticks(image_draw, c[2], border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
         
 
 def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
