@@ -2,7 +2,7 @@
 #!/usr/bin/env python
 import Tkinter as tk
 import tkFileDialog as file_dialog
-import rgb, display, json_read_write
+import rgb, display, json_read_write, new_picture_window
 from tkintertable import TableCanvas, TableModel
 
 
@@ -40,8 +40,9 @@ class Application(tk.Frame):
                 return
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
                 self.picture_file = self.file
-                #TODO: Pop-up menu showing the picture and updating the nailx/naily
-                print "JSON creation not supported yet"
+                self.json_file = new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
+                if self.json_file:
+                    self.load(self.json_file)
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
 
@@ -60,7 +61,7 @@ class Application(tk.Frame):
         self.reload_table(0)
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
-        display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
+        display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
         display.draw_lines(self.steps)
         self.reload_button.config(state=tk.ACTIVE)
     

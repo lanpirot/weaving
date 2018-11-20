@@ -28,3 +28,17 @@ def read_json(file_name):
 def get_steps(file_name):
     with open(file_name) as f:
         return json.loads(f.read())[str_steps]
+
+def write(file_name, nailsx, nailsy, steps_done, two_sided_nail, color_scheme, steps, picture_file):
+    with open(file_name, "w+") as f:
+        f.seek(0)
+        dic = dict()
+        dic[str_nailsx] = nailsx
+        dic[str_nailsy] = nailsy
+        dic[str_steps_done] = steps_done
+        dic[str_two_sided_nail] = two_sided_nail
+        dic[str_color_scheme] = color_scheme
+        dic[str_steps] = steps
+        dic[str_picture_file] = picture_file
+        f.write(json.dumps(dic))
+        f.truncate()

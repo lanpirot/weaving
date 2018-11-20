@@ -32,28 +32,29 @@ def reload_from_start():
         c[0].itemconfigure('image', image=photos[c[2]])
         
 #load new picture from very start
-def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, nailsy, nails):
+def load(master_app, cs, picture_file, nailsx, nailsy, nails):
     global canvasses, my_image_source, my_image_blank
-    cs = (canvas_pic, canvas_pos, canvas_neg)
     img = Image.open(picture_file)
     my_image_blank = Image.new("RGBA", (img.width + 2*border_width, img.height + 2*border_width))
     my_image_source = my_image_blank.copy()
     my_image_source.paste(img, box=(border_width, border_width))
         
-    for e in xrange(len(canvasses)):
+    for e in xrange(len(cs)):
         if e != 1:
             photos[e] = ImageTk.PhotoImage(image=my_image_source)
             canvasses[e] = (cs[e], my_image_source, e)
         else:
             photos[e] = ImageTk.PhotoImage(image=my_image_blank)
             canvasses[e] = (cs[e], my_image_blank, e)
-    clear_load_canvasses(nailsx, nailsy, nails)
+    clear_load_canvasses(cs, nailsx, nailsy, nails)
     #these images can now be reused, for drawing purposes from the very start
-    my_image_blank = canvasses[1][1].copy()
+    if len(cs) > 1:
+        my_image_blank = canvasses[1][1].copy()
     my_image_source = canvasses[0][1].copy()
 
-def clear_load_canvasses(nailsx, nailsy, nails):
-    for c in canvasses:
+def clear_load_canvasses(cs, nailsx, nailsy, nails):
+    for cc in xrange(len(cs)):
+        c = canvasses[cc]
         canvas, photo = c[0], photos[c[2]]
         canvas.delete("all")
         
