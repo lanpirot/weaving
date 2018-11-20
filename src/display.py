@@ -106,7 +106,7 @@ def draw_lines(lines):
     image_draw_n = ImageDraw.Draw(canvasses[2][1])
     for l in lines:
         draw_line(l, image_draw_p, +1)
-        draw_line(l, image_draw_n, -1)
+        draw_line(l, image_draw_n, 0)
     photos[1] = ImageTk.PhotoImage(image=canvasses[1][1])
     canvasses[1][0].itemconfigure('image', image=photos[1])
     photos[2] = ImageTk.PhotoImage(image=canvasses[2][1])
@@ -116,6 +116,6 @@ def draw_line((nail1, nail2), draw, pos_neg):
     x1, y1 = nail1[1][0], nail1[1][1]
     x2, y2 = nail2[1][0], nail2[1][1]
     if pos_neg:
-        draw.line([(x1, y1), (x2, y2)], fill = "black")
+        draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
     else:
-        draw.line([(x1, y1), (x2, y2)], fill = "white")
+        draw.line([(x1, y1), (x2, y2)], (255,255,255,30))
