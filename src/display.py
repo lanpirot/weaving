@@ -5,8 +5,8 @@ border_width = 40
 tick_length = 3
 canvasses = [0, 1, 2]
 photos = [0, 1, 2]
-my_image_source = -3
-my_image_blank = -6
+my_image_source = 0
+my_image_blank = 0
 
 directions = dict()
 directions["N"] = (0,-1)
@@ -27,7 +27,6 @@ def reload_from_start():
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
             canvasses[c[2]] = (c[0], my_image_source.copy(), c[2])
         else:
-            print type(my_image_blank), my_image_blank
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_blank)
             canvasses[c[2]] = (c[0], my_image_blank.copy(), c[2])
         c[0].itemconfigure('image', image=photos[c[2]])
@@ -44,10 +43,10 @@ def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, n
         for e in xrange(len(canvasses)):
             if e != 1:
                 photos[e] = ImageTk.PhotoImage(image=my_image_source)
-                canvasses[e] = (cs[e], my_image_source.copy(), e)
+                canvasses[e] = (cs[e], my_image_source, e)
             else:
                 photos[e] = ImageTk.PhotoImage(image=my_image_blank)
-                canvasses[e] = (cs[e], my_image_blank.copy(), e)
+                canvasses[e] = (cs[e], my_image_blank, e)
         clear_load_canvasses(nailsx, nailsy, nails)
         #these images can now be reused, for drawing purposes from the very start
         my_image_blank = canvasses[1][1].copy()
@@ -55,15 +54,13 @@ def load(master_app, canvas_pic, canvas_pos, canvas_neg, picture_file, nailsx, n
 
 def clear_load_canvasses(nailsx, nailsy, nails):
     for c in canvasses:
-        put_photo_on_canvasses(c)
+        canvas, photo = c[0], photos[c[2]]
+        canvas.delete("all")
+        
+        canvas.configure(height = photo.height(), width = photo.width())
         draw_border(c, nailsx, nailsy, nails)
         photos[c[2]] = ImageTk.PhotoImage(image=c[1])
-        c[0].create_image((0, 0), image=photos[c[2]], anchor=tk.NW, tags="image")
-    
-def put_photo_on_canvasses(c):
-    c[0].delete("all")
-    photo = photos[c[2]]
-    c[0].configure(height = photo.height(), width = photo.width())
+        canvas.create_image((0, 0), image=photos[c[2]], anchor=tk.NW, tags="image")
         
 
 def draw_border(c, nailsx, nailsy, nails):

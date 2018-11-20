@@ -62,10 +62,6 @@ class Application(tk.Frame):
         self.nails = []
         display.load(self, self.canvas_pic, self.canvas_pos, self.canvas_neg, self.picture_file, self.nailsx, self.nailsy, self.nails)
         display.draw_lines(self.steps)
-        
-#        for s in xrange(self.steps_done):
-#            stepnail1, stepnail2 = self.steps[s]
-#            self.canvas_pos.create_line(stepnail1[1][0], stepnail1[1][1], stepnail2[1][0], stepnail2[1][1])
         self.reload_button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
@@ -108,7 +104,7 @@ class Application(tk.Frame):
         self.canvas_pos.grid(column=1, row=0)
         self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_neg.grid(column=2, row=0)
-        #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
+        #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture (todo)"
     
     def place_table(self):
         self.tframe = tk.Frame(self, width=460, height=130)
