@@ -115,18 +115,15 @@ class Application(tk.Tk):
         self.about_window.title("About")
         self.about_window.resizable(0,0)
         self.about_window.geometry("250x160")
-        
         self.about_frame = tk.Frame(master=self.about_window)
         self.about_frame.pack_propagate(0)
         self.about_frame.pack(fill=tk.BOTH, expand=1)
-        
         
         tk.Label(self.about_frame, font= tkFont.Font(size=10, weight='bold'), width=240, wraplength=240, text="Copyright 2018 Alexander Boll", justify=tk.LEFT).pack(padx=5,pady=2)
         tk.Label(self.about_frame, font= tkFont.Font(size=10), width=240, wraplength=240, text="This program can instruct you, how to weave a photo, with a couple of nails and a thread.\n\nYou can use and modify it for free, under the MIT license.", justify=tk.LEFT).pack(padx=5,pady=2)
         tk.Button(self.about_frame, text="Ok", width=10, command=self.about_window.destroy).pack(pady=8)
         self.about_window.transient(self)
         self.about_window.grab_set()
-        
 
     def place_menu(self):
         self.menubar = tk.Menu(self)
