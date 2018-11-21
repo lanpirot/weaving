@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 import Tkinter as tk
+import tkFont
 import tkFileDialog as file_dialog
 import rgb, display, json_read_write#, new_picture_window
 from tkintertable import TableCanvas, TableModel
@@ -15,10 +16,10 @@ class Application(tk.Tk):
     def init_values(self):
         #values of the menu itself
         self.main_color = self.cget('bg')
-        self.red = "#FF0000"
+        self.red = "#BB2222"
         self.halfred = rgb.halfway(self.main_color, self.red)
         self.quarred = rgb.halfway(self.main_color, self.halfred)
-        self.green = "#00FF00"
+        self.green = "#22BB22"
         self.halfgreen = rgb.halfway(self.main_color, self.green)
         self.quargreen = rgb.halfway(self.main_color, self.halfgreen)
         self.button_padding = 10
@@ -63,7 +64,8 @@ class Application(tk.Tk):
         self.nails = []
         display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
         display.draw_lines(self.steps)
-        self.reload_button.config(state=tk.ACTIVE)
+        self.file_menu.entryconfig("Reload current progress", state=tk.NORMAL)
+        #self.reload_button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
         #if thread is running dump it into .json_file
@@ -83,9 +85,6 @@ class Application(tk.Tk):
         self.table.autoResizeColumns()
         self.table.redrawVisible()
         self.steps = new_steps
-        
-        
-        
     
     def place_buttons(self):
         pass
@@ -113,7 +112,22 @@ class Application(tk.Tk):
         self.table.addColumn(newname="nesw")
 
     def about(self):
-        pass
+        self.about_window = tk.Toplevel(self)
+        self.about_window.title("About")
+        self.about_window.resizable(0,0)
+        self.about_window.geometry("250x160")
+        
+        self.about_frame = tk.Frame(master=self.about_window)
+        self.about_frame.pack_propagate(0)
+        self.about_frame.pack(fill=tk.BOTH, expand=1)
+        
+        
+        tk.Label(self.about_frame, font= tkFont.Font(size=10, weight='bold'), width=240, wraplength=240, text="Copyright 2018 Alexander Boll", justify=tk.LEFT).pack(padx=5,pady=2)
+        tk.Label(self.about_frame, font= tkFont.Font(size=10), width=240, wraplength=240, text="This program can instruct you, how to weave a photo, with a couple of nails and a thread.\n\nYou can use and modify it for free, under the MIT license.", justify=tk.LEFT).pack(padx=5,pady=2)
+        tk.Button(self.about_frame, text="Ok", width=10, command=self.about_window.destroy).pack(pady=8)
+        self.about_window.transient(self)
+        self.about_window.grab_set()
+        
 
     def place_menu(self):
         self.menubar = tk.Menu(self)
@@ -122,7 +136,7 @@ class Application(tk.Tk):
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.file_menu.add_command(label="Open file", command=self.open_file)
         self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
-        self.file_menu.add_command(label="Reload current progress", command=self.reload_table)
+        self.file_menu.add_command(label="Reload current progress", command=self.reload_table, state = tk.DISABLED)
         self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
@@ -131,7 +145,6 @@ class Application(tk.Tk):
         self.menubar.add_cascade(label="Help", menu=self.help_menu)
 
     def create_widgets(self):
-        
         self.place_canvasses()
         self.place_buttons()
         self.place_table()
