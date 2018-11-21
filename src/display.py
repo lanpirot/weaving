@@ -116,3 +116,14 @@ def draw_line((nail1, nail2), draw, pos_neg):
         draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
     else:
         draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
+
+def create_photos():
+    start_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-start.png"))
+    back_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-bplay.png"))
+    play_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-play.png"))
+    end_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-end.png"))
+    return (start_photo, back_photo, play_photo, end_photo)
+    
+    
+    
+    

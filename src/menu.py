@@ -22,6 +22,8 @@ class Application(tk.Tk):
         self.green = "#22BB22"
         self.halfgreen = rgb.halfway(self.main_color, self.green)
         self.quargreen = rgb.halfway(self.main_color, self.halfgreen)
+        self.x_padding = 5
+        self.y_padding = 5
         self.button_padding = 10
         self.dark_gray = "#555555"
         #standard values of the picture and the weaving
@@ -29,7 +31,7 @@ class Application(tk.Tk):
         self.nailsy = 100
         self.steps_done = 0
         self.two_sided_nail = True
-        self.color_scheme = "bw"
+        self.color_scheme = "bw"#TODO: "grayscale" "rgb"
         self.steps = []
 
     
@@ -46,8 +48,6 @@ class Application(tk.Tk):
                     self.load(self.json_file)
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
-
-        #json_read_write.update_steps(self.file, self.steps)
     
     def start(self):
         pass
@@ -63,8 +63,10 @@ class Application(tk.Tk):
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
         display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
-        display.draw_lines(self.steps)
+        #display.draw_lines(self.steps)
         self.file_menu.entryconfig("Reload current progress", state=tk.NORMAL)
+        for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
+            button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
         #if thread is running dump it into .json_file
@@ -85,23 +87,44 @@ class Application(tk.Tk):
         self.table.redrawVisible()
         self.steps = new_steps
     
-    def place_buttons(self):
+    def back_to_start(self):
         pass
-#        self.quit_button = tk.Button(self, text='Quit', command=self.quit, bg=self.quarred, activebackground=self.halfred)
-#        self.quit_button.grid(column=0, row=3, padx=self.button_padding)
+
+    def back_one_step(self):
+        pass
+
+    def play_one_step(self):
+        pass
+
+    def play_to_end(self):
+        pass
+    
+    def place_buttons(self):
+        self.button_frame = tk.Frame(self)
+        self.button_frame.grid(column=0, row=3, columnspan=3, padx=self.x_padding, pady=self.y_padding, sticky=tk.S)
+        self.start_photo, self.back_photo, self.play_photo, self.end_photo = display.create_photos()
+        
+        self.start_button = tk.Button(self.button_frame, command=self.back_to_start, image = self.start_photo, state=tk.DISABLED)
+        self.start_button.grid(column=0, row=0, padx=self.button_padding)
+        self.back_button = tk.Button(self.button_frame, command=self.back_one_step, image = self.back_photo, state=tk.DISABLED)
+        self.back_button.grid(column=1, row=0, padx=self.button_padding)
+        self.play_button = tk.Button(self.button_frame, command=self.play_one_step, image = self.play_photo, state=tk.DISABLED)
+        self.play_button.grid(column=2, row=0, padx=self.button_padding)
+        self.end_button = tk.Button(self.button_frame, command=self.play_to_end, image = self.end_photo, state=tk.DISABLED)
+        self.end_button.grid(column=3, row=0, padx=self.button_padding)
     
     def place_canvasses(self):
         self.canvas_pic = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_pic.grid(column=0, row=1)	        
+        self.canvas_pic.grid(column=0, row=1, padx=self.x_padding, pady=self.y_padding)	        
         self.canvas_pos = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_pos.grid(column=1, row=1)
+        self.canvas_pos.grid(column=1, row=1, padx=self.x_padding, pady=self.y_padding)
         self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_neg.grid(column=2, row=1)
+        self.canvas_neg.grid(column=2, row=1, padx=self.x_padding, pady=self.y_padding)
         #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture (todo)"
     
     def place_table(self):
         self.tframe = tk.Frame(self, width=460, height=130)
-        self.tframe.grid(column=0, row = 2, columnspan=3)
+        self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True)
         self.table.show()
@@ -142,8 +165,8 @@ class Application(tk.Tk):
 
     def create_widgets(self):
         self.place_canvasses()
-        self.place_buttons()
         self.place_table()
+        self.place_buttons()
         self.place_menu()
 
 app = Application()
