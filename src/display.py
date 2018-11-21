@@ -22,7 +22,7 @@ def get_dir(a, b):
 
 #after the picture was already loaded once, and we need to reset to the very beginning
 def reload_from_start():
-    for c in canvasses:
+    for c in canvasses[1:]:
         if c[2] != 1:
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
             canvasses[c[2]] = (c[0], my_image_source.copy(), c[2])
@@ -123,7 +123,3 @@ def create_photos():
     play_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-play.png"))
     end_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-end.png"))
     return (start_photo, back_photo, play_photo, end_photo)
-    
-    
-    
-    

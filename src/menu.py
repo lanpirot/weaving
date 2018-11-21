@@ -33,6 +33,7 @@ class Application(tk.Tk):
         self.two_sided_nail = True
         self.color_scheme = "bw"#TODO: "grayscale" "rgb"
         self.steps = []
+        self.current_step = 0
 
     
     def open_file(self):
@@ -57,6 +58,7 @@ class Application(tk.Tk):
         #read (new) .json_file
         #load the three canvasses
         #update table content
+        self.current_step = 0
         self.table.model.deleteRows(xrange(len(self.steps)))
         self.json_file = json_file
         self.reload_table(0)
@@ -64,7 +66,7 @@ class Application(tk.Tk):
         self.nails = []
         display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
         #display.draw_lines(self.steps)
-        self.file_menu.entryconfig("Reload current progress", state=tk.NORMAL)
+        self.file_menu.entryconfig("Reload .json file", state=tk.NORMAL)
         for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
             button.config(state=tk.ACTIVE)
     
@@ -88,16 +90,26 @@ class Application(tk.Tk):
         self.steps = new_steps
     
     def back_to_start(self):
-        pass
+        if self.current_step > 0:
+            display.reload_from_start()
+            self.current_step = 0
 
     def back_one_step(self):
-        pass
+        if self.current_step > 0:
+            display.reload_from_start()
+            display.draw_lines(self.steps[:self.current_step-1])
+            self.current_step -= 1
 
     def play_one_step(self):
-        pass
+        if self.current_step < len(self.steps):
+            display.draw_lines(self.steps[self.current_step:self.current_step+1])
+            self.current_step += 1
 
     def play_to_end(self):
-        pass
+        if self.current_step < len(self.steps):
+            display.draw_lines(self.steps[self.current_step:])
+            self.current_step = len(self.steps) - 1
+            
     
     def place_buttons(self):
         self.button_frame = tk.Frame(self)
@@ -155,7 +167,7 @@ class Application(tk.Tk):
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.file_menu.add_command(label="Open file", command=self.open_file)
         self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
-        self.file_menu.add_command(label="Reload current progress", command=self.reload_table, state = tk.DISABLED)
+        self.file_menu.add_command(label="Reload .json file", command=self.reload_table, state = tk.DISABLED)
         self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
