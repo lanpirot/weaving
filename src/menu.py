@@ -65,7 +65,6 @@ class Application(tk.Tk):
         display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
         display.draw_lines(self.steps)
         self.file_menu.entryconfig("Reload current progress", state=tk.NORMAL)
-        #self.reload_button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
         #if thread is running dump it into .json_file
