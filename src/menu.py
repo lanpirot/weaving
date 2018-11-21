@@ -2,14 +2,13 @@
 #!/usr/bin/env python
 import Tkinter as tk
 import tkFileDialog as file_dialog
-import rgb, display, json_read_write, new_picture_window
+import rgb, display, json_read_write#, new_picture_window
 from tkintertable import TableCanvas, TableModel
 
 
-class Application(tk.Frame):
-    def __init__(self, master=None):
-        tk.Frame.__init__(self, master)
-        self.grid()
+class Application(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
         self.init_values()
         self.create_widgets()
     
@@ -23,6 +22,7 @@ class Application(tk.Frame):
         self.halfgreen = rgb.halfway(self.main_color, self.green)
         self.quargreen = rgb.halfway(self.main_color, self.halfgreen)
         self.button_padding = 10
+        self.dark_gray = "#555555"
         #standard values of the picture and the weaving
         self.nailsx = 100
         self.nailsy = 100
@@ -88,28 +88,22 @@ class Application(tk.Frame):
         
     
     def place_buttons(self):
-        self.quit_button = tk.Button(self, text='Quit', command=self.quit, bg=self.quarred, activebackground=self.halfred)
-        self.quit_button.grid(column=0, row=2, padx=self.button_padding)
-        self.open_dialog_button = tk.Button(self, text='Open file', command=self.open_file)
-        self.open_dialog_button.grid(column=1, row=2, padx=self.button_padding)
-        self.reload_button = tk.Button(self, text="Reload table", command=self.reload_table, state=tk.DISABLED)
-        self.reload_button.grid(column=2, row=2, padx=self.button_padding)
-        self.start_button = tk.Button(self, text="Start/Continue weaving", command=self.start, bg=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
-        self.start_button.grid(column=3, row=2, padx=self.button_padding)
-        
+        pass
+#        self.quit_button = tk.Button(self, text='Quit', command=self.quit, bg=self.quarred, activebackground=self.halfred)
+#        self.quit_button.grid(column=0, row=3, padx=self.button_padding)
     
     def place_canvasses(self):
         self.canvas_pic = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_pic.grid(column=0, row=0)	        
+        self.canvas_pic.grid(column=0, row=1)	        
         self.canvas_pos = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_pos.grid(column=1, row=0)
+        self.canvas_pos.grid(column=1, row=1)
         self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_neg.grid(column=2, row=0)
+        self.canvas_neg.grid(column=2, row=1)
         #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture (todo)"
     
     def place_table(self):
         self.tframe = tk.Frame(self, width=460, height=130)
-        self.tframe.grid(column=0, row = 1, columnspan=3)
+        self.tframe.grid(column=0, row = 2, columnspan=3)
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True)
         self.table.show()
@@ -118,11 +112,31 @@ class Application(tk.Frame):
         self.table.addColumn(newname="to")
         self.table.addColumn(newname="nesw")
 
+    def about(self):
+        pass
+
+    def place_menu(self):
+        self.menubar = tk.Menu(self)
+        self.config(menu=self.menubar)
+        
+        self.file_menu = tk.Menu(self.menubar, tearoff=0)
+        self.file_menu.add_command(label="Open file", command=self.open_file)
+        self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
+        self.file_menu.add_command(label="Reload current progress", command=self.reload_table)
+        self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred)
+        self.menubar.add_cascade(label="File", menu=self.file_menu)
+        
+        self.help_menu = tk.Menu(self.menubar, tearoff=0)
+        self.help_menu.add_command(label="About", command=self.about)
+        self.menubar.add_cascade(label="Help", menu=self.help_menu)
+
     def create_widgets(self):
+        
         self.place_canvasses()
         self.place_buttons()
         self.place_table()
+        self.place_menu()
 
 app = Application()
-app.master.title('Weave your pictures!')
+app.title('Weave your pictures!')
 app.mainloop()
