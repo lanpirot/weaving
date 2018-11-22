@@ -63,13 +63,14 @@ class Application(tk.Tk):
         #load the three canvasses
         #update table content
         self.current_step = -1
-        self.table.model.deleteRows(xrange(len(self.steps)))
+        self.tframe.destroy()
+        self.place_table()
         self.json_file = json_file
         self.reload_table(0)
+        self.table.setSelectedRow(-1)
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
         display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
-        #display.draw_lines(self.steps)
         self.file_menu.entryconfig("Reload .json file", state=tk.NORMAL)
         for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
             button.config(state=tk.ACTIVE)
@@ -97,6 +98,7 @@ class Application(tk.Tk):
         if self.current_step >= 0:
             display.reload_from_start()
             self.current_step = -1
+            self.mark_current()
 
     def back_one_step(self):
         if self.current_step >= 0:
@@ -104,14 +106,12 @@ class Application(tk.Tk):
             self.current_step -= 1
             display.draw_lines(self.steps[:self.current_step+1])
             self.mark_current()
-            
 
     def play_one_step(self):
         if self.current_step + 1 < len(self.steps):
             self.current_step += 1
             display.draw_lines(self.steps[self.current_step:self.current_step+1])
             self.mark_current()
-            
 
     def play_to_end(self):
         if self.current_step + 1 < len(self.steps):
@@ -121,10 +121,20 @@ class Application(tk.Tk):
 
     #TODO:mark and show current table-row
     def mark_current_row(self):
-        pass
+        if self.current_step >= 0:
+            self.table.setSelectedRow(self.current_step)
+            #self.table.movetoSelectedRow(row="Step "+str(self.current_step))
+        else:
+            self.table.setSelectedRow(-1)
+            self.table.clearSelected()
+#                #self.table.movetoSelectedRow(row="Step "+str(0))
+#        try:
+        self.table.redrawVisible()
+#        except TypeError:
+#            pass
     
     def mark_current(self):
-        mark_current_row()
+        self.mark_current_row()
         if self.mark.get():
             display.draw_lines(self.steps[self.current_step:self.current_step+1], True)
     
@@ -155,7 +165,7 @@ class Application(tk.Tk):
         self.tframe = tk.Frame(self, width=460, height=130)
         self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
-        self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True, editable=False, rowselectedcolor=self.quarred)
+        self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True, rowselectedcolor=self.quarred, editable=False)
         self.table.show()
         self.table.addColumn(newname="From")
         self.table.addColumn(newname="NESW")
