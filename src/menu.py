@@ -155,7 +155,7 @@ class Application(tk.Tk):
         self.tframe = tk.Frame(self, width=460, height=130)
         self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
-        self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True)
+        self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True, editable=False, rowselectedcolor=self.quarred)
         self.table.show()
         self.table.addColumn(newname="From")
         self.table.addColumn(newname="NESW")
