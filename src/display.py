@@ -98,24 +98,27 @@ def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, na
             w, h = image_draw.textsize(str(scalar))
             image_draw.text(((tickx+6*tick_length*tickdx)-w/2, (ticky+6*tick_length*tickdy)-h/2), text=str(scalar), fill="black")
 
-def draw_lines(lines):
+def draw_lines(lines, mark=False):
     image_draw_p = ImageDraw.Draw(canvasses[1][1])
     image_draw_n = ImageDraw.Draw(canvasses[2][1])
     for l in lines:
-        draw_line(l, image_draw_p, +1)
+        draw_line(l, image_draw_p, +1, mark)
         draw_line(l, image_draw_n, 0)
     photos[1] = ImageTk.PhotoImage(image=canvasses[1][1])
     canvasses[1][0].itemconfigure('image', image=photos[1])
     photos[2] = ImageTk.PhotoImage(image=canvasses[2][1])
     canvasses[2][0].itemconfigure('image', image=photos[2])
 
-def draw_line((nail1, nail2), draw, pos_neg):
+def draw_line((nail1, nail2), draw, pos_neg, mark=False):
     x1, y1 = nail1[1][0], nail1[1][1]
     x2, y2 = nail2[1][0], nail2[1][1]
-    if pos_neg:
-        draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
+    if mark:
+        draw.line([(x1, y1), (x2, y2)], (255,0,0), width=2)
     else:
-        draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
+        if pos_neg:
+            draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
+        else:
+            draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
 
 def create_photos():
     start_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-start.png"))

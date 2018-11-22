@@ -28,6 +28,8 @@ class Application(tk.Tk):
         self.x_padding = 5
         self.y_padding = 5
         self.button_padding = 10
+        self.mark = tk.IntVar()
+        self.mark.set(0)
         #standard values of the picture and the weaving
         self.nailsx = 100
         self.nailsy = 100
@@ -60,7 +62,7 @@ class Application(tk.Tk):
         #read (new) .json_file
         #load the three canvasses
         #update table content
-        self.current_step = 0
+        self.current_step = -1
         self.table.model.deleteRows(xrange(len(self.steps)))
         self.json_file = json_file
         self.reload_table(0)
@@ -92,26 +94,39 @@ class Application(tk.Tk):
         self.steps = new_steps
     
     def back_to_start(self):
-        if self.current_step > 0:
+        if self.current_step >= 0:
             display.reload_from_start()
-            self.current_step = 0
+            self.current_step = -1
 
     def back_one_step(self):
-        if self.current_step > 0:
+        if self.current_step >= 0:
             display.reload_from_start()
-            display.draw_lines(self.steps[:self.current_step-1])
             self.current_step -= 1
+            display.draw_lines(self.steps[:self.current_step+1])
+            self.mark_current()
+            
 
     def play_one_step(self):
-        if self.current_step < len(self.steps):
-            display.draw_lines(self.steps[self.current_step:self.current_step+1])
+        if self.current_step + 1 < len(self.steps):
             self.current_step += 1
+            display.draw_lines(self.steps[self.current_step:self.current_step+1])
+            self.mark_current()
+            
 
     def play_to_end(self):
-        if self.current_step < len(self.steps):
-            display.draw_lines(self.steps[self.current_step:])
+        if self.current_step + 1 < len(self.steps):
+            display.draw_lines(self.steps[self.current_step + 1:])
             self.current_step = len(self.steps) - 1
-            
+            self.mark_current()
+
+    #TODO:mark and show current table-row
+    def mark_current_row(self):
+        pass
+    
+    def mark_current(self):
+        mark_current_row()
+        if self.mark.get():
+            display.draw_lines(self.steps[self.current_step:self.current_step+1], True)
     
     def place_buttons(self):
         self.button_frame = tk.Frame(self)
@@ -166,9 +181,6 @@ class Application(tk.Tk):
         self.menubar = tk.Menu(self)
         self.config(menu=self.menubar)
         
-        
-        #TODO: mark the last one in red color checkbox
-        
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.file_menu.add_command(label="Open file", command=self.open_file, font=self.default_font)
         self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED, font=self.default_font)
@@ -176,9 +188,13 @@ class Application(tk.Tk):
         self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred, font=self.default_font)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
+        self.view_menu = tk.Menu(self.menubar, tearoff=0)
+        self.view_menu.add_checkbutton(label="Mark last move", variable=self.mark)
+        self.menubar.add_cascade(label="View", menu=self.view_menu)
+        
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
         self.help_menu.add_command(label="About", command=self.about)
-        self.menubar.add_cascade(label="Help", menu=self.help_menu, font=self.default_font)
+        self.menubar.add_cascade(label="Help", menu=self.help_menu)
 
     def create_widgets(self):
         self.place_canvasses()
