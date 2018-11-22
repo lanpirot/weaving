@@ -126,12 +126,8 @@ class Application(tk.Tk):
             #self.table.movetoSelectedRow(row="Step "+str(self.current_step))
         else:
             self.table.setSelectedRow(-1)
-            self.table.clearSelected()
-#                #self.table.movetoSelectedRow(row="Step "+str(0))
-#        try:
+#           self.table.movetoSelectedRow(row="Step "+str(0))
         self.table.redrawVisible()
-#        except TypeError:
-#            pass
     
     def mark_current(self):
         self.mark_current_row()
