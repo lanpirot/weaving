@@ -15,6 +15,9 @@ class Application(tk.Tk):
     
     def init_values(self):
         #values of the menu itself
+        self.default_font = tkFont.nametofont("TkDefaultFont")
+        self.default_font.configure(size=11)
+        self.option_add("*Font", self.default_font)
         self.main_color = self.cget('bg')
         self.red = "#BB2222"
         self.halfred = rgb.halfway(self.main_color, self.red)
@@ -167,15 +170,15 @@ class Application(tk.Tk):
         #TODO: mark the last one in red color checkbox
         
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
-        self.file_menu.add_command(label="Open file", command=self.open_file)
-        self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED)
-        self.file_menu.add_command(label="Reload .json file", command=self.reload_table, state = tk.DISABLED)
-        self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred)
+        self.file_menu.add_command(label="Open file", command=self.open_file, font=self.default_font)
+        self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED, font=self.default_font)
+        self.file_menu.add_command(label="Reload .json file", command=self.reload_table, state = tk.DISABLED, font=self.default_font)
+        self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred, font=self.default_font)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
         self.help_menu.add_command(label="About", command=self.about)
-        self.menubar.add_cascade(label="Help", menu=self.help_menu)
+        self.menubar.add_cascade(label="Help", menu=self.help_menu, font=self.default_font)
 
     def create_widgets(self):
         self.place_canvasses()
