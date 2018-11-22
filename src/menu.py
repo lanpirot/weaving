@@ -37,7 +37,7 @@ class Application(tk.Tk):
         self.two_sided_nail = True
         self.color_scheme = "bw"#TODO: "grayscale" "rgb"
         self.steps = []
-        self.current_step = 0
+        self.current_step = -1
 
     
     def open_file(self):
@@ -93,6 +93,17 @@ class Application(tk.Tk):
         self.table.autoResizeColumns()
         self.table.redrawVisible()
         self.steps = new_steps
+
+    def delete_markings_nactive(self):
+        if self.mark.get():
+            self.view_menu.entryconfig("Delete all markings", state=tk.NORMAL)
+        else:
+            self.view_menu.entryconfig("Delete all markings", state=tk.DISABLED)
+
+    def delete_markings(self):
+        if self.current_step >= 0:
+            display.reload_from_start()
+            display.draw_lines(self.steps[:self.current_step+1])
     
     def back_to_start(self):
         if self.current_step >= 0:
@@ -119,7 +130,7 @@ class Application(tk.Tk):
             self.current_step = len(self.steps) - 1
             self.mark_current()
 
-    #TODO:mark and show current table-row
+    #TODO: show current table-row
     def mark_current_row(self):
         if self.current_step >= 0:
             self.table.setSelectedRow(self.current_step)
@@ -195,8 +206,10 @@ class Application(tk.Tk):
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
         self.view_menu = tk.Menu(self.menubar, tearoff=0)
-        self.view_menu.add_checkbutton(label="Mark last move", variable=self.mark)
+        self.view_menu.add_checkbutton(label="Mark last move", variable=self.mark, command=self.delete_markings_nactive)
+        self.view_menu.add_command(label="Delete all markings", command=self.delete_markings, state=tk.DISABLED)
         self.menubar.add_cascade(label="View", menu=self.view_menu)
+        
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
         self.help_menu.add_command(label="About", command=self.about)
