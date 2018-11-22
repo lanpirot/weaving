@@ -25,7 +25,6 @@ class Application(tk.Tk):
         self.x_padding = 5
         self.y_padding = 5
         self.button_padding = 10
-        self.dark_gray = "#555555"
         #standard values of the picture and the weaving
         self.nailsx = 100
         self.nailsy = 100
@@ -163,6 +162,9 @@ class Application(tk.Tk):
     def place_menu(self):
         self.menubar = tk.Menu(self)
         self.config(menu=self.menubar)
+        
+        
+        #TODO: mark the last one in red color checkbox
         
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.file_menu.add_command(label="Open file", command=self.open_file)
