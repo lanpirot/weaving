@@ -40,6 +40,9 @@ class Application(tk.Tk):
         self.current_step = -1
 
     
+    #TODO: File variables instead of everything fixed
+    #there must be a function, detecting where the main directory is and start from there
+    
     def open_file(self):
         self.file = file_dialog.askopenfilename(title='Choose picture to weave or finished weaving.json',filetypes=[("JSON","*.json"),("JSON","*.JSON"),("JPG","*.JPG"),("JPG","*.jpeg"),("JPG","*.jpg")], initialdir="weaves/example")
         if self.file:
