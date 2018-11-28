@@ -113,6 +113,7 @@ class Application(tk.Tk):
             display.reload_from_start()
             self.current_step = -1
             self.mark_current()
+            self.table.set_yviews('moveto', 0)
 
     def back_one_step(self):
         if self.current_step >= 0:
@@ -120,18 +121,21 @@ class Application(tk.Tk):
             self.current_step -= 1
             display.draw_lines(self.steps[:self.current_step+1])
             self.mark_current()
+            self.table.set_yviews('moveto', float(self.current_step)/(len(self.steps)+0.5))
 
     def play_one_step(self):
         if self.current_step + 1 < len(self.steps):
             self.current_step += 1
             display.draw_lines(self.steps[self.current_step:self.current_step+1])
             self.mark_current()
+            self.table.set_yviews('moveto', float(self.current_step)/(len(self.steps)+0.5))
 
     def play_to_end(self):
         if self.current_step + 1 < len(self.steps):
             display.draw_lines(self.steps[self.current_step + 1:])
             self.current_step = len(self.steps) - 1
             self.mark_current()
+            self.table.set_yviews('moveto', 1)
 
     #TODO: show current table-row
     def mark_current_row(self):
@@ -142,6 +146,7 @@ class Application(tk.Tk):
             self.table.setSelectedRow(-1)
 #           self.table.movetoSelectedRow(row="Step "+str(0))
         self.table.redrawVisible()
+        
     
     def mark_current(self):
         self.mark_current_row()
