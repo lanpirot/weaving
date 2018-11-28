@@ -15,13 +15,14 @@ directions["S"] = (0,1)
 directions["W"] = (-1,0)
 
 def get_dir(a, b):
+    """Look up cardinal directions in the dictionary."""
     for dirc in directions.keys():
         if directions[dirc] == (a, b):
             return dirc
     raise
 
-#after the picture was already loaded once, and we need to reset to the very beginning
 def reload_from_start():
+    """After the picture was already loaded once, and we need to reset to the very beginning."""
     for c in canvasses[1:]:
         if c[2] != 1:
             photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
@@ -31,8 +32,8 @@ def reload_from_start():
             canvasses[c[2]] = (c[0], my_image_blank.copy(), c[2])
         c[0].itemconfigure('image', image=photos[c[2]])
         
-#load new picture from very start
 def load(master_app, cs, picture_file, nailsx, nailsy, nails):
+    """Load new picture (for the first time) from very start."""
     global canvasses, my_image_source, my_image_blank
     img = Image.open(picture_file)
     my_image_blank = Image.new("RGBA", (img.width + 2*border_width, img.height + 2*border_width))
@@ -53,6 +54,7 @@ def load(master_app, cs, picture_file, nailsx, nailsy, nails):
     my_image_source = canvasses[0][1].copy()
 
 def clear_load_canvasses(cs, nailsx, nailsy, nails):
+    """Clear all canvasses from their data and load their photo onto it."""
     for cc in xrange(len(cs)):
         c = canvasses[cc]
         canvas, photo = c[0], photos[c[2]]
@@ -65,6 +67,7 @@ def clear_load_canvasses(cs, nailsx, nailsy, nails):
         
 
 def draw_border(c, nailsx, nailsy, nails):
+    """A rightangle and ticks with numbers are placed around each canvas."""
     height, width = photos[c[2]].height(), photos[c[2]].width()
     border = border_width
     
@@ -77,6 +80,7 @@ def draw_border(c, nailsx, nailsy, nails):
         
 
 def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
+    """Some ticks and their numbers are drawn on the canvas. For one canvas (the first) the nails and their positions are saved."""
     border = border_width
     if movex:
         steps = nailsx
@@ -99,6 +103,7 @@ def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, na
             image_draw.text(((tickx+6*tick_length*tickdx)-w/2, (ticky+6*tick_length*tickdy)-h/2), text=str(scalar), fill="black")
 
 def draw_lines(lines, mark=False):
+    """Lines can only be drawn on the middle and right canvas. On the middle one, they may be put in a special mode (mark)."""
     image_draw_p = ImageDraw.Draw(canvasses[1][1])
     image_draw_n = ImageDraw.Draw(canvasses[2][1])
     for l in lines:
@@ -110,6 +115,7 @@ def draw_lines(lines, mark=False):
     canvasses[2][0].itemconfigure('image', image=photos[2])
 
 def draw_line((nail1, nail2), draw, pos_neg, mark=False):
+    """On the middle canvas the lines are put on positively, on the right negatively. If the user selected the mark-mode, the line will be put on fat and red."""
     x1, y1 = nail1[1][0], nail1[1][1]
     x2, y2 = nail2[1][0], nail2[1][1]
     if mark:
@@ -121,6 +127,7 @@ def draw_line((nail1, nail2), draw, pos_neg, mark=False):
             draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
 
 def create_photos():
+    """The button pictures are loaded for the play, back ... buttons."""
     start_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-start.png"))
     back_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-bplay.png"))
     play_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-play.png"))

@@ -8,12 +8,17 @@ from tkintertable import TableCanvas, TableModel
 
 
 class Application(tk.Tk):
+    """A window for users to recreate their picture with nails and threads. Steps to re-weave are proposed, so that the picture 
+    will be recreated. The computation is done in an extra thread. The steps can be saved/loaded in a companioning .json file to
+    the picture."""
+    
     def __init__(self):
         tk.Tk.__init__(self)
         self.init_values()
         self.create_widgets()
     
     def init_values(self):
+        """Some values are loaded. Some for an initial .json-creation."""
         #values of the menu itself
         self.default_font = tkFont.nametofont("TkDefaultFont")
         self.default_font.configure(size=11)
@@ -44,6 +49,11 @@ class Application(tk.Tk):
     #there must be a function, detecting where the main directory is and start from there
     
     def open_file(self):
+        """
+        The File open menu has been clicked. The user gets to chose a existing project (a .json) which they can view or 
+        compute new steps in. Otherwise the user choses a .jpg and the .json will be created from scratch, after a prompt 
+        asking for some parameters.
+        """
         self.file = file_dialog.askopenfilename(title='Choose picture to weave or finished weaving.json',filetypes=[("JSON","*.json"),("JSON","*.JSON"),("JPG","*.JPG"),("JPG","*.jpeg"),("JPG","*.jpg")], initialdir="weaves/example")
         if self.file:
             if self.file.partition(".")[2].lower() == "json":
@@ -58,6 +68,7 @@ class Application(tk.Tk):
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
     
     def start(self):
+        """TODO: start a new thread, getting as input the .json, which can dump new steps into the .json after a call."""
         pass
     
     def load(self, json_file):
@@ -98,62 +109,66 @@ class Application(tk.Tk):
         self.steps = new_steps
 
     def delete_markings_nactive(self):
+        """The view menu status button changes its state with each click."""
         if self.mark.get():
             self.view_menu.entryconfig("Delete all markings", state=tk.NORMAL)
         else:
             self.view_menu.entryconfig("Delete all markings", state=tk.DISABLED)
 
     def delete_markings(self):
+        """All special highlighted steps shall be removed, so that the user can see the picture itself again."""
         if self.current_step >= 0:
             display.reload_from_start()
             display.draw_lines(self.steps[:self.current_step+1])
     
     def back_to_start(self):
+        """User pressed back_to_start-button, and displays are reset."""
         if self.current_step >= 0:
             display.reload_from_start()
             self.current_step = -1
             self.mark_current()
-            self.table.set_yviews('moveto', 0)
 
     def back_one_step(self):
+        """User pressed back-button, and displays are reset and played back till one step before the current."""
         if self.current_step >= 0:
             display.reload_from_start()
             self.current_step -= 1
             display.draw_lines(self.steps[:self.current_step+1])
             self.mark_current()
-            self.table.set_yviews('moveto', float(self.current_step)/(len(self.steps)+0.5))
 
     def play_one_step(self):
+        """User pressed forward-button, and displays are updated with the next step."""
         if self.current_step + 1 < len(self.steps):
             self.current_step += 1
             display.draw_lines(self.steps[self.current_step:self.current_step+1])
             self.mark_current()
-            self.table.set_yviews('moveto', float(self.current_step)/(len(self.steps)+0.5))
 
     def play_to_end(self):
+        """User pressed back-to-end-button, and displays are updated with the last step."""
         if self.current_step + 1 < len(self.steps):
             display.draw_lines(self.steps[self.current_step + 1:])
             self.current_step = len(self.steps) - 1
             self.mark_current()
-            self.table.set_yviews('moveto', 1)
 
-    #TODO: show current table-row
     def mark_current_row(self):
+        """Update the table with the current row, jump to it and highlight it. If no step has been perfomed no row will be highlighted."""
+        self.table.set_yviews('moveto', max(0, float(self.current_step)/(len(self.steps)+0.5)))
         if self.current_step >= 0:
             self.table.setSelectedRow(self.current_step)
-            #self.table.movetoSelectedRow(row="Step "+str(self.current_step))
         else:
             self.table.setSelectedRow(-1)
-#           self.table.movetoSelectedRow(row="Step "+str(0))
         self.table.redrawVisible()
         
     
     def mark_current(self):
+        """The row of the current step will be highlighted and shown in the table. If the user wants fat lines for the current step, 
+        they will be drawn onto the canvas in fat and red."""
         self.mark_current_row()
         if self.mark.get():
             display.draw_lines(self.steps[self.current_step:self.current_step+1], True)
     
     def place_buttons(self):
+        """The play, back, to_end, to_start buttons are placed in the bottom."""
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(column=0, row=3, columnspan=3, padx=self.x_padding, pady=self.y_padding, sticky=tk.S)
         self.start_photo, self.back_photo, self.play_photo, self.end_photo = display.create_photos()
@@ -168,15 +183,22 @@ class Application(tk.Tk):
         self.end_button.grid(column=3, row=0, padx=self.button_padding)
     
     def place_canvasses(self):
+        """
+           The three canvasses are placed. 
+              The left (canvas_pic) is for the original photo.
+              The middle (canvas_pos) is a view, of what the user should recreate themselves.
+              The right (canvas_neg) is a view, of what is left to do (canvas_pic - canvas_pos).
+        """
         self.canvas_pic = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_pic.grid(column=0, row=1, padx=self.x_padding, pady=self.y_padding)	        
         self.canvas_pos = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_pos.grid(column=1, row=1, padx=self.x_padding, pady=self.y_padding)
         self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_neg.grid(column=2, row=1, padx=self.x_padding, pady=self.y_padding)
-        #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture (todo)"
+        #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
     
     def place_table(self):
+        """The table in the bottom describing the steps and their order."""
         self.tframe = tk.Frame(self, width=460, height=130)
         self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
@@ -188,6 +210,7 @@ class Application(tk.Tk):
         self.table.addColumn(newname="nesw")
 
     def about(self):
+        """The about window, that pops up, in the help context."""
         self.about_window = tk.Toplevel(self)
         self.about_window.title("About")
         self.about_window.resizable(0,0)
@@ -203,6 +226,7 @@ class Application(tk.Tk):
         self.about_window.grab_set()
 
     def place_menu(self):
+        """The menu bar."""
         self.menubar = tk.Menu(self)
         self.config(menu=self.menubar)
         
@@ -216,14 +240,14 @@ class Application(tk.Tk):
         self.view_menu = tk.Menu(self.menubar, tearoff=0)
         self.view_menu.add_checkbutton(label="Mark last move", variable=self.mark, command=self.delete_markings_nactive)
         self.view_menu.add_command(label="Delete all markings", command=self.delete_markings, state=tk.DISABLED)
-        self.menubar.add_cascade(label="View", menu=self.view_menu)
-        
+        self.menubar.add_cascade(label="View", menu=self.view_menu)        
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
         self.help_menu.add_command(label="About", command=self.about)
         self.menubar.add_cascade(label="Help", menu=self.help_menu)
 
     def create_widgets(self):
+        """The main parts of the app are created and placed on the grid of the window."""
         self.place_canvasses()
         self.place_table()
         self.place_buttons()
