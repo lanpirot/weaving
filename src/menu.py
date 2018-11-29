@@ -3,7 +3,7 @@
 import Tkinter as tk
 import tkFont
 import tkFileDialog as file_dialog
-import rgb, display, json_read_write#, new_picture_window
+import rgb, display, json_read_write, new_picture_window
 from tkintertable import TableCanvas, TableModel
 
 
@@ -61,9 +61,7 @@ class Application(tk.Tk):
                 return
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
                 self.picture_file = self.file
-                self.json_file = new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
-                if self.json_file:
-                    self.load(self.json_file)
+                new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
     
@@ -186,7 +184,7 @@ class Application(tk.Tk):
         """
            The three canvasses are placed. 
               The left (canvas_pic) is for the original photo.
-              The middle (canvas_pos) is a view, of what the user should recreate themselves.
+              The middle (canvopen_fileas_pos) is a view, of what the user should recreate themselves.
               The right (canvas_neg) is a view, of what is left to do (canvas_pic - canvas_pos).
         """
         self.canvas_pic = tk.Canvas(self, bg="white", height = 200, width = 200)
