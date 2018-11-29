@@ -43,10 +43,6 @@ class Application(tk.Tk):
         self.color_scheme = "bw"#TODO: "grayscale" "rgb"
         self.steps = []
         self.current_step = -1
-
-    
-    #TODO: File variables instead of everything fixed
-    #there must be a function, detecting where the main directory is and start from there
     
     def open_file(self):
         """

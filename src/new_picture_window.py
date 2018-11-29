@@ -6,7 +6,7 @@ import display, json_read_write
 Window = 0
 button_padding = 10
 
-new_json_file = "weave " + str(time.strftime('%c')) + ".json"
+new_json_file = ""
 nailsx = 0
 nailsy = 0
 steps_done = 0
@@ -20,7 +20,7 @@ _app = 0
 def window(app, p_f, nx, ny):
     global Window, nailsx, nailsy, two_sided_nail, color_scheme, steps, picture_file, _app, new_json_file
     picture_file, nailsx, nailsy, _app = p_f, nx, ny, app
-    new_json_file = picture_file.rsplit("/", 1)[0] + "/" + new_json_file
+    new_json_file = picture_file.rsplit("/", 1)[0] + "/" + "weave " + str(time.strftime('%c')) + ".json"
     Window = tk.Toplevel(app)
     canvas_pic = tk.Canvas(Window, bg="white", height = 200, width = 200)
     display.load(Window, [canvas_pic], picture_file, nailsx, nailsy, [])
@@ -45,7 +45,9 @@ def quit():
     
 
 def show_ok_cancel():
-     ok_button = tk.Button(Window, text='Ok', command=ok)
-     ok_button.grid(column=0, row=1, padx=button_padding)
-     cancel_button = tk.Button(Window, text='Cancel', command=quit)
-     cancel_button.grid(column=1, row=1, padx=button_padding)
+    button_frame = tk.Frame(Window)
+    button_frame.grid(column=0, row=1, padx=_app.x_padding, pady=_app.y_padding, sticky=tk.S)
+    ok_button = tk.Button(button_frame, text='Ok', command=ok)
+    ok_button.grid(column=0, row=0, padx=button_padding)
+    cancel_button = tk.Button(button_frame, text='Cancel', command=quit)
+    cancel_button.grid(column=1, row=0, padx=button_padding)
