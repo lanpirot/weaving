@@ -88,10 +88,6 @@ class Config_Dialog(tk.Toplevel):
         self.two_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
         self.one_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
 
-
-    def show_nailsx_variabley(self):
-        pass
-
     def ok(self):
         if self.entry_x.get() == "" or self.entry_y.get() == "":
             tkMessageBox.showerror("Error!", "The nail numbers must both contain a number!", parent=self)
