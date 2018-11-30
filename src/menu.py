@@ -57,7 +57,8 @@ class Application(tk.Tk):
                 return
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
                 self.picture_file = self.file
-                new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
+                new_picture_window.Config_Dialog(self, self.picture_file, self.nailsx, self.nailsy)
+#                new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
     
