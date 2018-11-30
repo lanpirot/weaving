@@ -62,14 +62,14 @@ class Config_Dialog(tk.Toplevel):
         self.bw_button = tk.Radiobutton(self.field_frame, text = "black/white", variable=self.color_variable, value="bw")
         self.gr_button = tk.Radiobutton(self.field_frame, text = "gray scale", state=tk.DISABLED, variable=self.color_variable, value="gray")
         self.rg_button = tk.Radiobutton(self.field_frame, text = "rgb", state=tk.DISABLED, variable=self.color_variable, value="rgb")
-        self.bw_button.grid()
-        self.gr_button.grid()
-        self.rg_button.grid()
+        self.bw_button.grid(padx=self.app.button_padding, sticky=tk.W)
+        self.gr_button.grid(padx=self.app.button_padding, sticky=tk.W)
+        self.rg_button.grid(padx=self.app.button_padding, sticky=tk.W)
         tk.Label(self.field_frame, text="Nail sides:").grid(row=6, column=0, sticky=tk.W)
         self.two_sided_button = tk.Radiobutton(self.field_frame, text = "Two sided nails", variable=self.two_sided_variable, value=True)
         self.one_sided_button = tk.Radiobutton(self.field_frame, text = "One sided nails", state = tk.DISABLED, variable=self.two_sided_variable, value = False)
-        self.two_sided_button.grid()
-        self.one_sided_button.grid()
+        self.two_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
+        self.one_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
 
 
     def show_nailsx_variabley(self):
@@ -88,7 +88,7 @@ class Config_Dialog(tk.Toplevel):
     def show_ok_cancel(self):
         self.button_frame = tk.Frame(self)
         self.button_frame.grid(column=0, row=1, columnspan=2, padx=self.app.x_padding, pady=self.app.y_padding, sticky=tk.S)
-        self.ok_button = tk.Button(self.button_frame, text='Ok', command=self.ok)
+        self.ok_button = tk.Button(self.button_frame, text='Use these settings', command=self.ok)
         self.ok_button.grid(column=0, row=0, padx=self.app.button_padding)
         self.cancel_button = tk.Button(self.button_frame, text='Cancel', command=self.quit)
         self.cancel_button.grid(column=1, row=0, padx=self.app.button_padding)
