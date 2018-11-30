@@ -44,7 +44,7 @@ class Config_Dialog(tk.Toplevel):
         if not ((text_after.isdigit() and int(text_after) <= 500) or text_after == ""):
             return False
         if self.loaded:
-            if is_y:
+            if is_y == "isy":
                 x, y = self.entry_x.get(), text_after
             else:
                 x, y = text_after, self.entry_y.get()
@@ -62,13 +62,13 @@ class Config_Dialog(tk.Toplevel):
         self.show_radio_buttons()
 
     def show_input_fields(self):
-        okay_command = self.field_frame.register(self.is_Okay)
+        self.okay_command = self.field_frame.register(self.is_Okay)
         
         tk.Label(self.field_frame, text="#horizontal nails").grid(row=0, column = 0, sticky=tk.W)
         tk.Label(self.field_frame, text="#vertical nails").grid(row=1, column = 0, sticky=tk.W)
-        self.entry_x = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P', False))
+        self.entry_x = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isx"))
         self.entry_x.grid(row=0, column=1)
-        self.entry_y = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P', True))
+        self.entry_y = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isy"))
         self.entry_y.grid(row=1, column=1)
         self.entry_x.insert(0, str(self.nailsx))
         self.entry_y.insert(0, str(self.nailsy))
