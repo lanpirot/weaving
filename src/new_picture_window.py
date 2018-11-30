@@ -14,7 +14,7 @@ class Config_Dialog(tk.Toplevel):
         
         self.color_variable = tk.StringVar()
         self.color_variable.set("bw")
-        self.two_sided_variable = tk.IntVar()
+        self.two_sided_variable = tk.BooleanVar()
         self.two_sided_variable.set(True)
         self.nailsx, self.nailsy = nx, ny
         
@@ -59,15 +59,15 @@ class Config_Dialog(tk.Toplevel):
 
     def show_radio_buttons(self):
         tk.Label(self.field_frame, text="Color mode:").grid(row=2, column=0, sticky=tk.W)
-        self.bw_button = tk.Radiobutton(self.field_frame, text = "black/white", variable=self.color_variable)
-        self.gr_button = tk.Radiobutton(self.field_frame, text = "gray scale", state=tk.DISABLED, variable=self.color_variable)
-        self.rg_button = tk.Radiobutton(self.field_frame, text = "rgb", state=tk.DISABLED, variable=self.color_variable)
+        self.bw_button = tk.Radiobutton(self.field_frame, text = "black/white", variable=self.color_variable, value="bw")
+        self.gr_button = tk.Radiobutton(self.field_frame, text = "gray scale", state=tk.DISABLED, variable=self.color_variable, value="gray")
+        self.rg_button = tk.Radiobutton(self.field_frame, text = "rgb", state=tk.DISABLED, variable=self.color_variable, value="rgb")
         self.bw_button.grid()
         self.gr_button.grid()
         self.rg_button.grid()
         tk.Label(self.field_frame, text="Nail sides:").grid(row=6, column=0, sticky=tk.W)
-        self.two_sided_button = tk.Radiobutton(self.field_frame, text = "Two sided nails", variable=self.two_sided_variable)
-        self.one_sided_button = tk.Radiobutton(self.field_frame, text = "One sided nails", state = tk.DISABLED, variable=self.two_sided_variable)
+        self.two_sided_button = tk.Radiobutton(self.field_frame, text = "Two sided nails", variable=self.two_sided_variable, value=True)
+        self.one_sided_button = tk.Radiobutton(self.field_frame, text = "One sided nails", state = tk.DISABLED, variable=self.two_sided_variable, value = False)
         self.two_sided_button.grid()
         self.one_sided_button.grid()
 
