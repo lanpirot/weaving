@@ -55,7 +55,6 @@ class Config_Dialog(tk.Toplevel):
             display.load(self, [self.canvas_pic], self.picture_file, max(1, int(x)), max(1, int(y)), [])
         return True
 
-
     def show_right_side(self):
         self.field_frame = tk.Frame(self)
         self.field_frame.grid(column=1, row=0, padx=self.app.x_padding, pady=self.app.y_padding)
@@ -90,7 +89,7 @@ class Config_Dialog(tk.Toplevel):
 
     def ok(self):
         if self.entry_x.get() == "" or self.entry_y.get() == "":
-            tkMessageBox.showerror("Error!", "The nail numbers must both contain a number!", parent=self)
+            tkMessageBox.showerror("Error!", "The nail numbers must contain a number each!", parent=self)
             return
         json_read_write.write(self.new_json_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())), self.steps_done, self.two_sided_variable.get(), self.color_variable.get(), self.steps, self.picture_file)
         self.app.json_file = self.new_json_file

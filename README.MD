@@ -10,7 +10,6 @@ This is complete work in progress and should not be touched yet.
 
 ## Necessary Packages
 
-- Tkinter
-- tkintertable
-- ImageTk
-- Pillow
+- [Tkinter](https://wiki.python.org/moin/TkInter)
+- [tkintertable](https://github.com/dmnfarrell/tkintertable/)
+- [Pillow](https://github.com/python-pillow/Pillow)
