@@ -1,4 +1,5 @@
 import Tkinter as tk
+import tkMessageBox
 import time
 import display, json_read_write
 
@@ -9,6 +10,8 @@ class Config_Dialog(tk.Toplevel):
         self.init(app, p_f, nx, ny)
 
     def init(self, app, p_f, nx, ny):
+        self.title("Configure picture settings")
+        self.loaded = False
         self.picture_file, self.app = p_f, app
         self.new_json_file = self.picture_file.rsplit("/", 1)[0] + "/" + "weave " + str(time.strftime('%c')) + ".json"
         
@@ -33,11 +36,25 @@ class Config_Dialog(tk.Toplevel):
 
     def show_canvas(self):
         self.canvas_pic = tk.Canvas(self, bg="white", height = 1, width = 1)
-        display.load(self, [self.canvas_pic], self.picture_file, int(self.entry_x.get()), int(self.entry_y.get()), [])    
+        display.load(self, [self.canvas_pic], self.picture_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())), [])
         self.canvas_pic.grid(column=0, row=0)
+        self.loaded = True
 
-    def isOkay(self, text_after):
-        return (text_after.isdigit() and int(text_after) <= 500) or text_after == ""
+    def is_Okay(self, text_after, is_y):
+        if not ((text_after.isdigit() and int(text_after) <= 500) or text_after == ""):
+            return False
+        if self.loaded:
+            if is_y:
+                x, y = self.entry_x.get(), text_after
+            else:
+                x, y = text_after, self.entry_y.get()
+            if x == "":
+                x = "1"
+            if y == "":
+                y = "1"
+            display.load(self, [self.canvas_pic], self.picture_file, max(1, int(x)), max(1, int(y)), [])
+        return True
+
 
     def show_right_side(self):
         self.field_frame = tk.Frame(self)
@@ -46,13 +63,13 @@ class Config_Dialog(tk.Toplevel):
         self.show_radio_buttons()
 
     def show_input_fields(self):
-        okay_command = self.field_frame.register(self.isOkay)
+        okay_command = self.field_frame.register(self.is_Okay)
         
         tk.Label(self.field_frame, text="#horizontal nails").grid(row=0, column = 0, sticky=tk.W)
         tk.Label(self.field_frame, text="#vertical nails").grid(row=1, column = 0, sticky=tk.W)
-        self.entry_x = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P'))
+        self.entry_x = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P', False))
         self.entry_x.grid(row=0, column=1)
-        self.entry_y = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P'))
+        self.entry_y = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(okay_command, '%P', True))
         self.entry_y.grid(row=1, column=1)
         self.entry_x.insert(0, str(self.nailsx))
         self.entry_y.insert(0, str(self.nailsy))
@@ -76,6 +93,9 @@ class Config_Dialog(tk.Toplevel):
         pass
 
     def ok(self):
+        if self.entry_x.get() == "" or self.entry_y.get() == "":
+            tkMessageBox.showerror("Error!", "The nail numbers must both contain a number!", parent=self)
+            return
         json_read_write.write(self.new_json_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())), self.steps_done, self.two_sided_variable.get(), self.color_variable.get(), self.steps, self.picture_file)
         self.app.json_file = self.new_json_file
         self.app.load(self.new_json_file)
