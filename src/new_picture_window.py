@@ -11,6 +11,7 @@ class Config_Dialog(tk.Toplevel):
 
     def init(self, app, p_f, nx, ny):
         self.title("Configure picture settings")
+        self.resizable(0,0)
         self.loaded = False
         self.picture_file, self.app = p_f, app
         self.new_json_file = self.picture_file.rsplit("/", 1)[0] + "/" + "weave " + str(time.strftime('%c')) + ".json"

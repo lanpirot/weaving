@@ -36,6 +36,7 @@ class Application(tk.Tk):
         self.button_padding = 10
         self.mark = tk.IntVar()
         self.mark.set(0)
+        self.resizable(0,0)
         #standard values of the picture and the weaving
         self.nailsx = 100
         self.nailsy = 100
