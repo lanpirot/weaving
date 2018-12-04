@@ -1,131 +1,101 @@
 import Tkinter as tk
 from PIL import Image, ImageTk, ImageDraw
+import crunch_pic
 
 border_width = 40
 tick_length = 3
-canvasses = [0, 1, 2]
-photos = [0, 1, 2]
-my_image_source = 0
-my_image_blank = 0
 
-directions = dict()
-directions["N"] = (0,-1)
-directions["E"] = (1,0)
-directions["S"] = (0,1)
-directions["W"] = (-1,0)
+class my_canvas(object):
+    def __init__(self, picture_file, canvas, nails, draw_var):
+        self.picture_file = picture_file
+        self.canvas = canvas
+        self.nails = nails
+        self.draw_var = draw_var
+        img = Image.open(self.picture_file)
+        self.start_image = Image.new("RGBA", (img.width + 2*border_width, img.height + 2*border_width))
+        self.height, self.width = self.start_image.height, self.start_image.width
+        if draw_var <= 0:
+            self.start_image.paste(img, box=(border_width, border_width))
+        
+        self.image_draw = ImageDraw.Draw(self.start_image)
+        self.draw_border()
+        self.draw_ticks()
+        self.image = self.start_image.copy()
+        self.image_draw = ImageDraw.Draw(self.image)
+        self.photo = ImageTk.PhotoImage(image=self.image)
+                
+        self.canvas.delete("all")
+        self.canvas.configure(height = self.image.height, width = self.image.width)
+        self.canvas.create_image((0, 0), image=self.photo, anchor=tk.NW, tags="image")
+            
+    def draw_ticks(self):
+        for tick_line in self.nails:
+            self.draw_tick_line(tick_line)
 
-def get_dir(a, b):
-    """Look up cardinal directions in the dictionary."""
-    for dirc in directions.keys():
-        if directions[dirc] == (a, b):
-            return dirc
-    raise
+    def draw_tick_line(self, tick_line):
+        for e, tick in enumerate(tick_line):
+            start_x, start_y, end_x, end_y = tick[0], tick[1], tick[0]+tick_length*tick[2], tick[1]+tick_length*tick[3]
+            self.image_draw.line([(start_x, start_y), (end_x, end_y)], fill="black")
+            if e % 5 == 0:
+                start_x, start_y, end_x, end_y = tick[0], tick[1], tick[0]+2*tick_length*tick[2], tick[1]+2*tick_length*tick[3]
+                self.image_draw.line([(start_x, start_y), (end_x, end_y)], fill="black")
+                w, h = self.image_draw.textsize(str(e))
+                self.image_draw.text(((tick[0]+6*tick_length*tick[2])-w/2, (tick[1]+6*tick_length*tick[3])-h/2), text=str(e), fill="black")
+
+    def draw_border(self):
+        width, height = self.start_image.width, self.start_image.height
+        self.image_draw.line([(border_width, border_width), (width-border_width, border_width), (width-border_width, height-border_width), (border_width, height-border_width), (border_width, border_width)], fill="black")
+
+    def reload_from_start(self):
+        self.image = self.start_image.copy()
+        self.image_draw = ImageDraw.Draw(self.image)
+        self.photo = ImageTk.PhotoImage(image=self.image)
+        self.canvas.itemconfigure('image', image=self.photo)
+    
+    def draw_lines(self, lines, mark=False):
+        """Lines can only be drawn on the middle and right canvas. On the middle one, they may be put in a special mode (mark)."""
+        if self.draw_var == 0:
+            return
+        for l in lines:
+            self.draw_line(l, mark)
+        self.photo = ImageTk.PhotoImage(image=self.image)
+        self.canvas.itemconfigure('image', image=self.photo)
+
+    def draw_line(self, (nail1, nail2), mark=False):
+        """On the middle canvas the lines are put on positively, on the right negatively. If the user selected the mark-mode, the line will be put on fat and red."""
+        x1, y1 = nail1[1][0], nail1[1][1]
+        x2, y2 = nail2[1][0], nail2[1][1]
+        if mark and self.draw_var > 0:
+            self.image_draw.line([(x1, y1), (x2, y2)], (255,0,0), width=3)
+        else:
+            if self.draw_var > 0:
+                self.image_draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
+            else:
+                self.image_draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
+
+all_canvasses = dict()
+def load(canvasses, picture_file, nails_x, nails_y):
+    global all_canvasses, nails
+    img = Image.open(picture_file)
+    nails = crunch_pic.get_nails(nails_x, nails_y, img.width+2*border_width, img.height+2*border_width, border_width)
+    for (id, c) in canvasses:
+        if id == 0 or id == 3:
+            draw_var = 0
+        elif id == 1:
+            draw_var = 1
+        else:
+            draw_var = -1
+        all_canvasses[id] = my_canvas(picture_file, c, nails, draw_var)
+    return crunch_pic.get_nails_only(nails)
 
 def reload_from_start():
-    """After the picture was already loaded once, and we need to reset to the very beginning."""
-    for c in canvasses[1:]:
-        if c[2] != 1:
-            photos[c[2]] = ImageTk.PhotoImage(image=my_image_source)
-            canvasses[c[2]] = (c[0], my_image_source.copy(), c[2])
-        else:
-            photos[c[2]] = ImageTk.PhotoImage(image=my_image_blank)
-            canvasses[c[2]] = (c[0], my_image_blank.copy(), c[2])
-        c[0].itemconfigure('image', image=photos[c[2]])
-        
-def load(master_app, cs, picture_file, nailsx, nailsy, nails):
-    """Load new picture (for the first time) from very start."""
-    global canvasses, my_image_source, my_image_blank
-    img = Image.open(picture_file)
-    my_image_blank = Image.new("RGBA", (img.width + 2*border_width, img.height + 2*border_width))
-    my_image_source = my_image_blank.copy()
-    my_image_source.paste(img, box=(border_width, border_width))
-        
-    for e in xrange(len(cs)):
-        if e != 1:
-            photos[e] = ImageTk.PhotoImage(image=my_image_source)
-            canvasses[e] = (cs[e], my_image_source, e)
-        else:
-            photos[e] = ImageTk.PhotoImage(image=my_image_blank)
-            canvasses[e] = (cs[e], my_image_blank, e)
-    clear_load_canvasses(cs, nailsx, nailsy, nails)
-    #these images can now be reused, for drawing purposes from the very start
-    if len(cs) > 1:
-        my_image_blank = canvasses[1][1].copy()
-    my_image_source = canvasses[0][1].copy()
+    for c in all_canvasses:
+        all_canvasses[c].reload_from_start()
 
-def clear_load_canvasses(cs, nailsx, nailsy, nails):
-    """Clear all canvasses from their data and load their photo onto it."""
-    for cc in xrange(len(cs)):
-        c = canvasses[cc]
-        canvas, photo = c[0], photos[c[2]]
-        canvas.delete("all")
-        
-        canvas.configure(height = photo.height(), width = photo.width())
-        draw_border(c, nailsx, nailsy, nails)
-        photos[c[2]] = ImageTk.PhotoImage(image=c[1])
-        canvas.create_image((0, 0), image=photos[c[2]], anchor=tk.NW, tags="image")
-        
-
-def draw_border(c, nailsx, nailsy, nails):
-    """A rightangle and ticks with numbers are placed around each canvas."""
-    height, width = photos[c[2]].height(), photos[c[2]].width()
-    border = border_width
+def draw_lines(steps, mark=False):
+    for c in all_canvasses:
+        all_canvasses[c].draw_lines(steps, mark)
     
-    image_draw = ImageDraw.Draw(c[1])
-    image_draw.line([(border, border), (width-border, border), (width-border, height-border), (border, height-border), (border, border)], fill="black")
-    draw_ticks(image_draw, c[2], border, border, 1, 0, 0, -1, nailsx, nailsy, nails)
-    draw_ticks(image_draw, c[2], width-border, border, 0, 1, 1, 0, nailsx, nailsy, nails)
-    draw_ticks(image_draw, c[2], width-border, height-border, -1, 0, 0, 1, nailsx, nailsy, nails)
-    draw_ticks(image_draw, c[2], border, height-border, 0, -1, -1, 0, nailsx, nailsy, nails)
-        
-
-def draw_ticks(image_draw, app, startx, starty, movex, movey, tickdx, tickdy, nailsx, nailsy, nails):
-    """Some ticks and their numbers are drawn on the canvas. For one canvas (the first) the nails and their positions are saved."""
-    border = border_width
-    if movex:
-        steps = nailsx
-        scale = float(photos[0].width()-2*border_width) / steps
-    else:
-        steps = nailsy
-        scale = float(photos[0].height()-2*border_width) / steps
-    for scalar in xrange(steps):
-        s = int(scale * scalar)
-        tickx, ticky = startx + movex*s, starty + movey*s
-        if not app:
-            #all nails (but only for one canvas) get archived for later usage in the actual algorithm
-            nails.append(((scalar, get_dir(tickdx, tickdy)), (tickx, ticky), (tickx-border, ticky-border)))
-        image_draw.line([(tickx, ticky), (tickx+tick_length*tickdx, ticky+tick_length*tickdy)], fill="black")
-        if scalar % 5 == 0:
-            image_draw.line([(tickx, ticky), (tickx+2*tick_length*tickdx, ticky+2*tick_length*tickdy)], fill="black")
-            #myfont = ImageFont.truetype("my-font", 16)
-            #draw.textsize(msg, font=myFont)
-            w, h = image_draw.textsize(str(scalar))
-            image_draw.text(((tickx+6*tick_length*tickdx)-w/2, (ticky+6*tick_length*tickdy)-h/2), text=str(scalar), fill="black")
-
-def draw_lines(lines, mark=False):
-    """Lines can only be drawn on the middle and right canvas. On the middle one, they may be put in a special mode (mark)."""
-    image_draw_p = ImageDraw.Draw(canvasses[1][1])
-    image_draw_n = ImageDraw.Draw(canvasses[2][1])
-    for l in lines:
-        draw_line(l, image_draw_p, +1, mark)
-        draw_line(l, image_draw_n, 0)
-    photos[1] = ImageTk.PhotoImage(image=canvasses[1][1])
-    canvasses[1][0].itemconfigure('image', image=photos[1])
-    photos[2] = ImageTk.PhotoImage(image=canvasses[2][1])
-    canvasses[2][0].itemconfigure('image', image=photos[2])
-
-def draw_line((nail1, nail2), draw, pos_neg, mark=False):
-    """On the middle canvas the lines are put on positively, on the right negatively. If the user selected the mark-mode, the line will be put on fat and red."""
-    x1, y1 = nail1[1][0], nail1[1][1]
-    x2, y2 = nail2[1][0], nail2[1][1]
-    if mark:
-        draw.line([(x1, y1), (x2, y2)], (255,0,0), width=2)
-    else:
-        if pos_neg:
-            draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
-        else:
-            draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
-
 def create_photos():
     """The button pictures are loaded for the play, back ... buttons."""
     start_photo = ImageTk.PhotoImage(image=Image.open("icons/icons-start.png"))

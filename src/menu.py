@@ -79,7 +79,7 @@ class Application(tk.Tk):
         self.table.setSelectedRow(-1)
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
-        display.load(self, [self.canvas_pic, self.canvas_pos, self.canvas_neg], self.picture_file, self.nailsx, self.nailsy, self.nails)
+        nails = display.load([(0, self.canvas_pic), (1, self.canvas_pos), (2, self.canvas_neg)], self.picture_file, self.nailsx, self.nailsy)
         self.file_menu.entryconfig("Reload .json file", state=tk.NORMAL)
         for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
             button.config(state=tk.ACTIVE)
