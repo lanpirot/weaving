@@ -1,4 +1,5 @@
 import Tkinter as tk
+import ttk
 from PIL import Image, ImageTk, ImageDraw
 import crunch_pic
 

@@ -1,5 +1,6 @@
 import Tkinter as tk
 import tkMessageBox
+import ttk
 import time
 import display, json_read_write
 
@@ -55,7 +56,7 @@ class Config_Dialog(tk.Toplevel):
         return True
 
     def show_right_side(self):
-        self.field_frame = tk.Frame(self)
+        self.field_frame = ttk.Frame(self)
         self.field_frame.grid(column=1, row=0, padx=self.app.x_padding, pady=self.app.y_padding)
         self.show_input_fields()
         self.show_radio_buttons()
@@ -63,26 +64,26 @@ class Config_Dialog(tk.Toplevel):
     def show_input_fields(self):
         self.okay_command = self.field_frame.register(self.is_Okay)
         
-        tk.Label(self.field_frame, text="#horizontal nails").grid(row=0, column = 0, sticky=tk.W)
-        tk.Label(self.field_frame, text="#vertical nails").grid(row=1, column = 0, sticky=tk.W)
-        self.entry_x = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isx"))
+        ttk.Label(self.field_frame, text="#horizontal nails").grid(row=0, column = 0, sticky=tk.W)
+        ttk.Label(self.field_frame, text="#vertical nails").grid(row=1, column = 0, sticky=tk.W)
+        self.entry_x = ttk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isx"))
         self.entry_x.grid(row=0, column=1)
-        self.entry_y = tk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isy"))
+        self.entry_y = ttk.Entry(self.field_frame, width=self.entry_width, validate='key', validatecommand=(self.okay_command, '%P', "isy"))
         self.entry_y.grid(row=1, column=1)
         self.entry_x.insert(0, str(self.nailsx))
         self.entry_y.insert(0, str(self.nailsy))
 
     def show_radio_buttons(self):
-        tk.Label(self.field_frame, text="Color mode:").grid(row=2, column=0, sticky=tk.W)
-        self.bw_button = tk.Radiobutton(self.field_frame, text = "black/white", variable=self.color_variable, value="bw")
-        self.gr_button = tk.Radiobutton(self.field_frame, text = "gray scale", state=tk.DISABLED, variable=self.color_variable, value="gray")
-        self.rg_button = tk.Radiobutton(self.field_frame, text = "rgb", state=tk.DISABLED, variable=self.color_variable, value="rgb")
+        ttk.Label(self.field_frame, text="Color mode:").grid(row=2, column=0, sticky=tk.W)
+        self.bw_button = ttk.Radiobutton(self.field_frame, text = "black/white", variable=self.color_variable, value="bw")
+        self.gr_button = ttk.Radiobutton(self.field_frame, text = "gray scale", state=tk.DISABLED, variable=self.color_variable, value="gray")
+        self.rg_button = ttk.Radiobutton(self.field_frame, text = "rgb", state=tk.DISABLED, variable=self.color_variable, value="rgb")
         self.bw_button.grid(padx=self.app.button_padding, sticky=tk.W)
         self.gr_button.grid(padx=self.app.button_padding, sticky=tk.W)
         self.rg_button.grid(padx=self.app.button_padding, sticky=tk.W)
-        tk.Label(self.field_frame, text="Nail sides:").grid(row=6, column=0, sticky=tk.W)
-        self.two_sided_button = tk.Radiobutton(self.field_frame, text = "Two sided nails", variable=self.two_sided_variable, value=True)
-        self.one_sided_button = tk.Radiobutton(self.field_frame, text = "One sided nails", state = tk.DISABLED, variable=self.two_sided_variable, value = False)
+        ttk.Label(self.field_frame, text="Nail sides:").grid(row=6, column=0, sticky=tk.W)
+        self.two_sided_button = ttk.Radiobutton(self.field_frame, text = "Two sided nails", variable=self.two_sided_variable, value=True)
+        self.one_sided_button = ttk.Radiobutton(self.field_frame, text = "One sided nails", state = tk.DISABLED, variable=self.two_sided_variable, value = False)
         self.two_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
         self.one_sided_button.grid(padx=self.app.button_padding, sticky=tk.W)
 
@@ -102,9 +103,9 @@ class Config_Dialog(tk.Toplevel):
         self.destroy()
 
     def show_ok_cancel(self):
-        self.button_frame = tk.Frame(self)
+        self.button_frame = ttk.Frame(self)
         self.button_frame.grid(column=0, row=1, columnspan=2, padx=self.app.x_padding, pady=self.app.y_padding, sticky=tk.S)
-        self.ok_button = tk.Button(self.button_frame, text='Use these settings', command=self.ok)
+        self.ok_button = ttk.Button(self.button_frame, text='Use these settings', command=self.ok)
         self.ok_button.grid(column=0, row=0, padx=self.app.button_padding)
-        self.cancel_button = tk.Button(self.button_frame, text='Cancel', command=self.quit)
+        self.cancel_button = ttk.Button(self.button_frame, text='Cancel', command=self.quit)
         self.cancel_button.grid(column=1, row=0, padx=self.app.button_padding)

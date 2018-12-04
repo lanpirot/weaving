@@ -5,6 +5,7 @@ import tkFont
 import tkFileDialog as file_dialog
 import rgb, display, json_read_write, new_picture_window
 from tkintertable import TableCanvas, TableModel
+import ttk
 
 
 class Application(tk.Tk):
@@ -164,17 +165,17 @@ class Application(tk.Tk):
     
     def place_buttons(self):
         """The play, back, to_end, to_start buttons are placed in the bottom."""
-        self.button_frame = tk.Frame(self)
+        self.button_frame = ttk.Frame(self)
         self.button_frame.grid(column=0, row=3, columnspan=3, padx=self.x_padding, pady=self.y_padding, sticky=tk.S)
         self.start_photo, self.back_photo, self.play_photo, self.end_photo = display.create_photos()
         
-        self.start_button = tk.Button(self.button_frame, command=self.back_to_start, image = self.start_photo, state=tk.DISABLED)
+        self.start_button = ttk.Button(self.button_frame, command=self.back_to_start, image = self.start_photo, state=tk.DISABLED)
         self.start_button.grid(column=0, row=0, padx=self.button_padding)
-        self.back_button = tk.Button(self.button_frame, command=self.back_one_step, image = self.back_photo, state=tk.DISABLED)
+        self.back_button = ttk.Button(self.button_frame, command=self.back_one_step, image = self.back_photo, state=tk.DISABLED)
         self.back_button.grid(column=1, row=0, padx=self.button_padding)
-        self.play_button = tk.Button(self.button_frame, command=self.play_one_step, image = self.play_photo, state=tk.DISABLED)
+        self.play_button = ttk.Button(self.button_frame, command=self.play_one_step, image = self.play_photo, state=tk.DISABLED)
         self.play_button.grid(column=2, row=0, padx=self.button_padding)
-        self.end_button = tk.Button(self.button_frame, command=self.play_to_end, image = self.end_photo, state=tk.DISABLED)
+        self.end_button = ttk.Button(self.button_frame, command=self.play_to_end, image = self.end_photo, state=tk.DISABLED)
         self.end_button.grid(column=3, row=0, padx=self.button_padding)
     
     def place_canvasses(self):
@@ -194,7 +195,7 @@ class Application(tk.Tk):
     
     def place_table(self):
         """The table in the bottom describing the steps and their order."""
-        self.tframe = tk.Frame(self, width=460, height=130)
+        self.tframe = ttk.Frame(self, width=460, height=130)
         self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True, rowselectedcolor=self.quarred, editable=False)
@@ -210,13 +211,13 @@ class Application(tk.Tk):
         self.about_window.title("About")
         self.about_window.resizable(0,0)
         self.about_window.geometry("250x160")
-        self.about_frame = tk.Frame(master=self.about_window)
+        self.about_frame = ttk.Frame(master=self.about_window)
         self.about_frame.pack_propagate(0)
         self.about_frame.pack(fill=tk.BOTH, expand=1)
         
-        tk.Label(self.about_frame, font= tkFont.Font(size=10, weight='bold'), width=240, wraplength=240, text="Copyright 2018 Alexander Boll", justify=tk.LEFT).pack(padx=5,pady=2)
-        tk.Label(self.about_frame, font= tkFont.Font(size=10), width=240, wraplength=240, text="This program can instruct you, how to weave a photo, with a couple of nails and a thread.\n\nYou can use and modify it for free, under the MIT license.", justify=tk.LEFT).pack(padx=5,pady=2)
-        tk.Button(self.about_frame, text="Ok", width=10, command=self.about_window.destroy).pack(pady=8)
+        ttk.Label(self.about_frame, font= tkFont.Font(size=10, weight='bold'), width=240, wraplength=240, text="Copyright 2018 Alexander Boll", justify=tk.LEFT).pack(padx=5,pady=2)
+        ttk.Label(self.about_frame, font= tkFont.Font(size=10), width=240, wraplength=240, text="This program can instruct you, how to weave a photo, with a couple of nails and a thread.\n\nYou can use and modify it for free, under the MIT license.", justify=tk.LEFT).pack(padx=5,pady=2)
+        ttk.Button(self.about_frame, text="Ok", width=10, command=self.about_window.destroy).pack(pady=8)
         self.about_window.transient(self)
         self.about_window.grab_set()
 
