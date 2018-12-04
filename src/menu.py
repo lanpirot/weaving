@@ -106,9 +106,9 @@ class Application(tk.Tk):
     def delete_markings_nactive(self):
         """The view menu status button changes its state with each click."""
         if self.mark.get():
-            self.view_menu.entryconfig("Delete all markings", state=tk.NORMAL)
+            self.view_menu.entryconfig("Delete current markings", state=tk.NORMAL)
         else:
-            self.view_menu.entryconfig("Delete all markings", state=tk.DISABLED)
+            self.view_menu.entryconfig("Delete current markings", state=tk.DISABLED)
 
     def delete_markings(self):
         """All special highlighted steps shall be removed, so that the user can see the picture itself again."""

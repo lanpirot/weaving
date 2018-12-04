@@ -24,6 +24,7 @@ def get_nails_only(nails):
     ret = []
     for line in nails:
         ret.append([(a[0], a[1]) for a in line])
+    #print ret
     return ret
 
 directions = dict()

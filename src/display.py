@@ -4,6 +4,7 @@ import crunch_pic
 
 border_width = 40
 tick_length = 3
+all_canvasses = dict()
 
 class my_canvas(object):
     def __init__(self, picture_file, canvas, nails, draw_var):
@@ -20,13 +21,13 @@ class my_canvas(object):
         self.image_draw = ImageDraw.Draw(self.start_image)
         self.draw_border()
         self.draw_ticks()
+        self.start_photo = ImageTk.PhotoImage(image=self.start_image)
         self.image = self.start_image.copy()
         self.image_draw = ImageDraw.Draw(self.image)
-        self.photo = ImageTk.PhotoImage(image=self.image)
                 
         self.canvas.delete("all")
         self.canvas.configure(height = self.image.height, width = self.image.width)
-        self.canvas.create_image((0, 0), image=self.photo, anchor=tk.NW, tags="image")
+        self.canvas.create_image((0, 0), image=self.start_photo, anchor=tk.NW, tags="image")
             
     def draw_ticks(self):
         for tick_line in self.nails:
@@ -49,7 +50,7 @@ class my_canvas(object):
     def reload_from_start(self):
         self.image = self.start_image.copy()
         self.image_draw = ImageDraw.Draw(self.image)
-        self.photo = ImageTk.PhotoImage(image=self.image)
+        self.photo = self.start_photo
         self.canvas.itemconfigure('image', image=self.photo)
     
     def draw_lines(self, lines, mark=False):
@@ -73,9 +74,9 @@ class my_canvas(object):
             else:
                 self.image_draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
 
-all_canvasses = dict()
+
 def load(canvasses, picture_file, nails_x, nails_y):
-    global all_canvasses, nails
+    global all_canvasses, border_width
     img = Image.open(picture_file)
     nails = crunch_pic.get_nails(nails_x, nails_y, img.width+2*border_width, img.height+2*border_width, border_width)
     for (id, c) in canvasses:
