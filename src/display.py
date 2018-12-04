@@ -88,6 +88,9 @@ def load(canvasses, picture_file, nails_x, nails_y):
         all_canvasses[id] = my_canvas(picture_file, c, nails, draw_var)
     return crunch_pic.get_nails_only(nails)
 
+def destroy():
+    del all_canvasses[3]
+
 def reload_from_start():
     for c in all_canvasses:
         all_canvasses[c].reload_from_start()

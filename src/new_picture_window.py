@@ -93,10 +93,12 @@ class Config_Dialog(tk.Toplevel):
         json_read_write.write(self.new_json_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())), self.steps_done, self.two_sided_variable.get(), self.color_variable.get(), self.steps, self.picture_file)
         self.app.json_file = self.new_json_file
         self.app.load(self.new_json_file)
+        display.destroy()
         self.destroy()
         
     def quit(self):
         self.app.json_file = None
+        display.destroy()
         self.destroy()
 
     def show_ok_cancel(self):

@@ -233,8 +233,8 @@ class Application(tk.Tk):
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
         self.view_menu = tk.Menu(self.menubar, tearoff=0)
-        self.view_menu.add_checkbutton(label="Mark last move", variable=self.mark, command=self.delete_markings_nactive)
-        self.view_menu.add_command(label="Delete all markings", command=self.delete_markings, state=tk.DISABLED)
+        self.view_menu.add_checkbutton(label="Mark last move(s)", variable=self.mark, command=self.delete_markings_nactive)
+        self.view_menu.add_command(label="Delete current markings", command=self.delete_markings, state=tk.DISABLED)
         self.menubar.add_cascade(label="View", menu=self.view_menu)        
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
