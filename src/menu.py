@@ -21,6 +21,8 @@ class Application(tk.Tk):
     def init_values(self):
         """Some values are loaded. Some for an initial .json-creation."""
         #values of the menu itself
+        style = ttk.Style(self)
+        style.theme_use('clam')
         self.default_font = tkFont.nametofont("TkDefaultFont")
         self.default_font.configure(size=11)
         self.option_add("*Font", self.default_font)
@@ -42,7 +44,7 @@ class Application(tk.Tk):
         self.nailsy = 100
         self.steps_done = 0
         self.two_sided_nail = True
-        self.color_scheme = "bw"#TODO: "grayscale" "rgb"
+        self.color_scheme = "bw"
         self.steps = []
         self.current_step = -1
     
@@ -192,7 +194,6 @@ class Application(tk.Tk):
         self.canvas_pos.grid(column=1, row=1, padx=self.x_padding, pady=self.y_padding)
         self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_neg.grid(column=2, row=1, padx=self.x_padding, pady=self.y_padding)
-        #TODO: tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
     
     def place_table(self):
         """The table in the bottom describing the steps and their order."""
@@ -211,7 +212,7 @@ class Application(tk.Tk):
         self.about_window = tk.Toplevel(self)
         self.about_window.title("About")
         self.about_window.resizable(0,0)
-        self.about_window.geometry("250x160")
+        self.about_window.geometry("250x170")
         self.about_frame = ttk.Frame(master=self.about_window)
         self.about_frame.pack_propagate(0)
         self.about_frame.pack(fill=tk.BOTH, expand=1)

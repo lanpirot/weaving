@@ -4,3 +4,4 @@
 /misc/
 /pictures/
 *.backup
+*weave\ *.json
