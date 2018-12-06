@@ -3,8 +3,9 @@
 import Tkinter as tk
 import tkFont
 import tkFileDialog as file_dialog
-import rgb, display, json_read_write, new_picture_window
+import rgb, display, json_read_write, new_picture_window, crunch_pic
 from tkintertable import TableCanvas, TableModel
+import threading
 import ttk
 
 
@@ -16,11 +17,26 @@ class Application(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.init_values()
-        self.create_widgets()
+        #self.create_widgets()
+        self.create_daemon()
+    
+    def create_daemon(self):
+        self.json_file = "weaves/example/weave.json"
+        self.weave_daemon_finish_event = threading.Event()
+        self.weave_daemon_finish_event.clear()
+        self.weave_daemon = crunch_pic.weave_thread(self, self.json_file, self.weave_daemon_finish_event)
+        self.weave_daemon.setDaemon(True)
+        self.weave_daemon.start()
+    
+    def on_closing(self):
+        self.weave_daemon_finish_event.set()
+        self.weave_daemon.join(5)
+        self.destroy()
     
     def init_values(self):
         """Some values are loaded. Some for an initial .json-creation."""
         #values of the menu itself
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
         style = ttk.Style(self)
         style.theme_use('clam')
         self.default_font = tkFont.nametofont("TkDefaultFont")
