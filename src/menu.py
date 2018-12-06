@@ -17,7 +17,7 @@ class Application(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.init_values()
-        #self.create_widgets()
+        self.create_widgets()
         self.create_daemon()
     
     def create_daemon(self):

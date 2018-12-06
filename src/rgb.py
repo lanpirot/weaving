@@ -6,7 +6,7 @@ class RGB(numpy.ndarray):
         return numpy.array([int(rgbstr[i:i+2], 16) for i in range(1, len(rgbstr), 2)]).view(cls)
  
     def __str__(self):
-        #self = self.astype(numpy.uint8)
+        self = self.astype(numpy.int16)
         return '#' + ''.join("00" if n < 0 else "0"+format(n, 'x') if n < 16 else format(n, 'x') for n in self)
 
 
