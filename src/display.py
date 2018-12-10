@@ -29,6 +29,8 @@ class my_canvas(object):
         self.canvas.delete("all")
         self.canvas.configure(height = self.image.height, width = self.image.width)
         self.canvas.create_image((0, 0), image=self.start_photo, anchor=tk.NW, tags="image")
+
+
             
     def draw_ticks(self):
         for tick_line in self.nails:
@@ -53,27 +55,28 @@ class my_canvas(object):
         self.image_draw = ImageDraw.Draw(self.image)
         self.photo = self.start_photo
         self.canvas.itemconfigure('image', image=self.photo)
+
+    def delete_lines(self, lines):
+        self.canvas.delete("marker")
+        for l in lines:
+            self.canvas.delete("line"+str(l))
     
     def draw_lines(self, lines, mark=False):
-        """Lines can only be drawn on the middle and right canvas. On the middle one, they may be put in a special mode (mark)."""
+        """Lines can only be drawn on the right canvas. On the middle one, they may be put in a special mode (mark)."""
         if self.draw_var == 0:
             return
         for l in lines:
             self.draw_line(l, mark)
-        self.photo = ImageTk.PhotoImage(image=self.image)
-        self.canvas.itemconfigure('image', image=self.photo)
 
-    def draw_line(self, (nail1, nail2), mark=False):
+    def draw_line(self, (l, (nail1, nail2)), mark=False):
         """On the middle canvas the lines are put on positively, on the right negatively. If the user selected the mark-mode, the line will be put on fat and red."""
         x1, y1 = nail1[1][0], nail1[1][1]
         x2, y2 = nail2[1][0], nail2[1][1]
         if mark and self.draw_var > 0:
-            self.image_draw.line([(x1, y1), (x2, y2)], (255,0,0), width=3)
+            self.canvas.delete("marker")
+            self.canvas.create_line((x1, y1), (x2, y2), fill=("#FF0000"), width=3, tags="marker")
         else:
-            if self.draw_var > 0:
-                self.image_draw.line([(x1, y1), (x2, y2)], (0,0,0,30))
-            else:
-                self.image_draw.line([(x1, y1), (x2, y2)], (255,255,255,10))
+            self.canvas.create_line((x1, y1), (x2, y2), fill=("#000000"), tags="line"+str(l))
 
 
 def load(canvasses, picture_file, nails_x, nails_y):
@@ -92,6 +95,10 @@ def load(canvasses, picture_file, nails_x, nails_y):
 
 def destroy():
     del all_canvasses[3]
+
+def delete_lines(lines):
+    for c in all_canvasses:
+        all_canvasses[c].delete_lines(lines)
 
 def reload_from_start():
     for c in all_canvasses:

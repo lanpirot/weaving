@@ -1,4 +1,4 @@
-import logging, threading, json_read_write
+import logging, threading, json_read_write, display
 from PIL import Image, ImageTk, ImageDraw
 import Tkinter as tk
 

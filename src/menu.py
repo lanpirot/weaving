@@ -99,7 +99,7 @@ class Application(tk.Tk):
         self.table.setSelectedRow(-1)
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
         self.nails = []
-        nails = display.load([(0, self.canvas_pic), (1, self.canvas_pos), (2, self.canvas_neg)], self.picture_file, self.nailsx, self.nailsy)
+        nails = display.load([(0, self.canvas_pic), (1, self.canvas_pos)], self.picture_file, self.nailsx, self.nailsy)
         self.file_menu.entryconfig("Reload .json file", state=tk.NORMAL)
         for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
             button.config(state=tk.ACTIVE)
@@ -123,13 +123,6 @@ class Application(tk.Tk):
         self.table.redrawVisible()
         self.steps = new_steps
 
-    def delete_markings_nactive(self):
-        """The view menu status button changes its state with each click."""
-        if self.mark.get():
-            self.view_menu.entryconfig("Delete current markings", state=tk.NORMAL)
-        else:
-            self.view_menu.entryconfig("Delete current markings", state=tk.DISABLED)
-
     def delete_markings(self):
         """All special highlighted steps shall be removed, so that the user can see the picture itself again."""
         if self.current_step >= 0:
@@ -139,29 +132,28 @@ class Application(tk.Tk):
     def back_to_start(self):
         """User pressed back_to_start-button, and displays are reset."""
         if self.current_step >= 0:
-            display.reload_from_start()
+            display.delete_lines(range(self.current_step+1))
             self.current_step = -1
             self.mark_current()
 
     def back_one_step(self):
         """User pressed back-button, and displays are reset and played back till one step before the current."""
         if self.current_step >= 0:
-            display.reload_from_start()
+            display.delete_lines([self.current_step])
             self.current_step -= 1
-            display.draw_lines(self.steps[:self.current_step+1])
             self.mark_current()
 
     def play_one_step(self):
         """User pressed forward-button, and displays are updated with the next step."""
         if self.current_step + 1 < len(self.steps):
             self.current_step += 1
-            display.draw_lines(self.steps[self.current_step:self.current_step+1])
+            display.draw_lines([(self.current_step, self.steps[self.current_step])])
             self.mark_current()
 
     def play_to_end(self):
         """User pressed back-to-end-button, and displays are updated with the last step."""
         if self.current_step + 1 < len(self.steps):
-            display.draw_lines(self.steps[self.current_step + 1:])
+            display.draw_lines([(k, self.steps[k]) for k in range(self.current_step + 1, len(self.steps))])
             self.current_step = len(self.steps) - 1
             self.mark_current()
 
@@ -179,13 +171,13 @@ class Application(tk.Tk):
         """The row of the current step will be highlighted and shown in the table. If the user wants fat lines for the current step, 
         they will be drawn onto the canvas in fat and red."""
         self.mark_current_row()
-        if self.mark.get():
-            display.draw_lines(self.steps[self.current_step:self.current_step+1], True)
+        if self.mark.get() and self.current_step >= 0:
+            display.draw_lines([(self.current_step, self.steps[self.current_step])], True)
     
     def place_buttons(self):
         """The play, back, to_end, to_start buttons are placed in the bottom."""
         self.button_frame = ttk.Frame(self)
-        self.button_frame.grid(column=0, row=3, columnspan=3, padx=self.x_padding, pady=self.y_padding, sticky=tk.S)
+        self.button_frame.grid(column=0, row=3, columnspan=2, padx=self.x_padding, pady=self.y_padding, sticky=tk.S)
         self.start_photo, self.back_photo, self.play_photo, self.end_photo = display.create_photos()
         
         self.start_button = ttk.Button(self.button_frame, command=self.back_to_start, image = self.start_photo, state=tk.DISABLED)
@@ -201,20 +193,17 @@ class Application(tk.Tk):
         """
            The three canvasses are placed. 
               The left (canvas_pic) is for the original photo.
-              The middle (canvopen_fileas_pos) is a view, of what the user should recreate themselves.
-              The right (canvas_neg) is a view, of what is left to do (canvas_pic - canvas_pos).
+              The right (canvopen_fileas_pos) is a view, of what the user should recreate themselves.
         """
         self.canvas_pic = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_pic.grid(column=0, row=1, padx=self.x_padding, pady=self.y_padding)	        
         self.canvas_pos = tk.Canvas(self, bg="white", height = 200, width = 200)
         self.canvas_pos.grid(column=1, row=1, padx=self.x_padding, pady=self.y_padding)
-        self.canvas_neg = tk.Canvas(self, bg="white", height = 200, width = 200)
-        self.canvas_neg.grid(column=2, row=1, padx=self.x_padding, pady=self.y_padding)
     
     def place_table(self):
         """The table in the bottom describing the steps and their order."""
         self.tframe = ttk.Frame(self, width=460, height=130)
-        self.tframe.grid(column=0, row = 2, columnspan=3, padx=self.x_padding, pady=self.y_padding)
+        self.tframe.grid(column=0, row = 2, columnspan=2, padx=self.x_padding, pady=self.y_padding)
         self.tframe.grid_propagate(0)
         self.table = TableCanvas(self.tframe, rows=0, cols=0, read_only=True, rowselectedcolor=self.quarred, editable=False)
         self.table.show()
@@ -252,8 +241,7 @@ class Application(tk.Tk):
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
         self.view_menu = tk.Menu(self.menubar, tearoff=0)
-        self.view_menu.add_checkbutton(label="Mark last move(s)", variable=self.mark, command=self.delete_markings_nactive)
-        self.view_menu.add_command(label="Delete current markings", command=self.delete_markings, state=tk.DISABLED)
+        self.view_menu.add_checkbutton(label="Mark last move(s)", variable=self.mark)
         self.menubar.add_cascade(label="View", menu=self.view_menu)        
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
