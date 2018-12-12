@@ -69,6 +69,7 @@ class weave_thread(threading.Thread):
         super(weave_thread, self).__init__()
         self.app = app
         self.json_file = json_file
+        self.json_steps = []
         self.setName("weave daemon")
 
     def run(self):
@@ -76,7 +77,6 @@ class weave_thread(threading.Thread):
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(self.json_file)
         self.image = Image.open(self.picture_file)
         self.height, self.width = self.image.height, self.image.width
-        self.json_steps = []
         self.nailify_steps()
         self.put_colors(); self.color_index = 0
         self.current_color = self.next_color()

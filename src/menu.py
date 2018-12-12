@@ -18,17 +18,27 @@ class Application(tk.Tk):
         tk.Tk.__init__(self)
         self.init_values()
         self.create_widgets()
+        self.create_daemon()
     
     def create_daemon(self):
-        self.weave_daemon = crunch_pic.weave_thread(self, self.json_file)
+        self.weave_daemon = crunch_pic.weave_thread(self, "")
         self.weave_daemon.setDaemon(True)
-        self.weave_daemon.start()
+    
+    def start_daemon(self):
+        self.weave_daemon.json_file = self.json_file
+        if self.weave_daemon.isalive():
+            self.weave_daemon.
+            self.weave_daemon.join()
+            self.weave_daemon.restart()
+        else:
+            self.weave_daemon.start()
     
     def on_closing(self):
         if hasattr(self, 'weave_daemon'):
             self.weave_daemon.save_now()
+            time.sleep(0.1)
         else:
-            logging.debug("No weave daemon found, app can quit directly!")
+            logging.debug("No weave daemon found!")
         self.destroy()
     
     def init_values(self):
@@ -89,7 +99,7 @@ class Application(tk.Tk):
         self.place_table()
         self.json_file = json_file
         (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
-        self.create_daemon()
+        self.start_daemon()
         self.reload_table(0)
         self.table.setSelectedRow(-1)
         display.load([(0, self.canvas_pic), (1, self.canvas_pos)], self.picture_file, self.nailsx, self.nailsy)
