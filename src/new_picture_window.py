@@ -37,7 +37,7 @@ class Config_Dialog(tk.Toplevel):
 
     def show_canvas(self):
         self.canvas_pic = tk.Canvas(self, bg="white", height = 1, width = 1)
-        display.load([(3, self.canvas_pic)], self.picture_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())))
+        display.load([(display.new_window.new_window_canvas_id, self.canvas_pic)], self.picture_file, max(1, int(self.entry_x.get())), max(1, int(self.entry_y.get())))
         self.canvas_pic.grid(column=0, row=0)
         self.loaded = True
 
@@ -53,7 +53,7 @@ class Config_Dialog(tk.Toplevel):
                 x = "1"
             if y == "":
                 y = "1"
-            display.load([(3, self.canvas_pic)], self.picture_file, max(1, int(x)), max(1, int(y)))
+            display.load([(display.new_window.new_window_canvas_id, self.canvas_pic)], self.picture_file, max(1, int(x)), max(1, int(y)))
         return True
 
     def show_right_side(self):

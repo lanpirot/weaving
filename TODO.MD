@@ -2,13 +2,15 @@
 
 ## Priority
 
+- fix all new window bugs
 - worker thread
-    - loads steps
-    - computes next steps
-    - dumps steps on exit or general demand
+    - tinker around with values
+    - try to make it faster
 
 ## Misc
 
+- fix empty tkintertable
+- fix tkintertable added row does all kinds of stuff like marking ...
 - help menu with suggestions 
-- color support for grayscale and rgb
-- tool tip for mouse over "original picture" "weaved picture" "original picture - weaved picture"
+- color support for rgb (variable for how many steps till color change)
+- tool tip for mouse over "original picture" "weaved picture"

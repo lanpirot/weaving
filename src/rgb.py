@@ -36,11 +36,11 @@ def array_add(a, b):
 
 def unfaithfulify(a):
     #watch out: the return value can be negative!
-    a = RGB.from_str(a)
     if a == "#FFFFFF":
         subtrahend = RGB.from_str("#000000")
     else:
         subtrahend = RGB.from_str("#0F0F0F")
+    a = RGB.from_str(a)
     a.darken()
     return a - subtrahend
 

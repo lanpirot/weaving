@@ -5,7 +5,7 @@ import tkFont
 import tkFileDialog as file_dialog
 import rgb, display, json_read_write, new_picture_window, crunch_pic
 from tkintertable import TableCanvas, TableModel
-import threading
+import threading, logging, time
 import ttk
 
 
@@ -18,18 +18,17 @@ class Application(tk.Tk):
         tk.Tk.__init__(self)
         self.init_values()
         self.create_widgets()
-        self.create_daemon()
     
     def create_daemon(self):
-        self.json_file = "weaves/example/weave.json"
-        self.weave_daemon_finish_event = threading.Event()
-        self.weave_daemon_finish_event.clear()
-        self.weave_daemon = crunch_pic.weave_thread(self, self.json_file, self.weave_daemon_finish_event)
+        self.weave_daemon = crunch_pic.weave_thread(self, self.json_file)
         self.weave_daemon.setDaemon(True)
         self.weave_daemon.start()
     
     def on_closing(self):
-        self.weave_daemon.save_now()
+        if hasattr(self, 'weave_daemon'):
+            self.weave_daemon.save_now()
+        else:
+            logging.debug("No weave daemon found, app can quit directly!")
         self.destroy()
     
     def init_values(self):
@@ -52,7 +51,7 @@ class Application(tk.Tk):
         self.y_padding = 5
         self.button_padding = 10
         self.mark = tk.IntVar()
-        self.mark.set(0)
+        self.mark.set(1)
         self.resizable(0,0)
         #standard values of the picture and the weaving
         self.nailsx = 100
@@ -65,7 +64,7 @@ class Application(tk.Tk):
     
     def open_file(self):
         """
-        The File open menu has been clicked. The user gets to chose a existing project (a .json) which they can view or 
+        The File open menu has been clicked. The user gets to choose a existing project (a .json) which they can view or 
         compute new steps in. Otherwise the user choses a .jpg and the .json will be created from scratch, after a prompt 
         asking for some parameters.
         """
@@ -77,13 +76,8 @@ class Application(tk.Tk):
             elif self.file.partition(".")[2].lower() in ["jpeg", "jpg"]:
                 self.picture_file = self.file
                 new_picture_window.Config_Dialog(self, self.picture_file, self.nailsx, self.nailsy)
-#                new_picture_window.window(app, self.picture_file, self.nailsx, self.nailsy)
                 return
             raise Exception("File type not recognized:", self.file.partition(".")[2].lower(), "of file", self.file)
-    
-    def start(self):
-        """TODO: start a new thread, getting as input the .json, which can dump new steps into the .json after a call."""
-        pass
     
     def load(self, json_file):
         #if thread is running dump it into (old) .json_file and exit it
@@ -94,30 +88,38 @@ class Application(tk.Tk):
         self.tframe.destroy()
         self.place_table()
         self.json_file = json_file
+        (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
+        self.create_daemon()
         self.reload_table(0)
         self.table.setSelectedRow(-1)
-        (self.nailsx, self.nailsy, self.steps_done, self.two_sided_nail, self.color_scheme, self.steps, self.picture_file) = json_read_write.read_json(json_file)
-        self.nails = []
-        nails = display.load([(0, self.canvas_pic), (1, self.canvas_pos)], self.picture_file, self.nailsx, self.nailsy)
-        self.file_menu.entryconfig("Reload .json file", state=tk.NORMAL)
+        display.load([(0, self.canvas_pic), (1, self.canvas_pos)], self.picture_file, self.nailsx, self.nailsy)
         for button in [self.start_button, self.back_button, self.play_button, self.end_button]:
             button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
+        while self.steps and type(self.steps[0]) == type([]):
+            if not self.steps:
+                return
+            time.sleep(0.01)
         if already_loaded < 0:
             already_loaded = len(self.steps)
-        new_steps = json_read_write.get_steps(self.json_file)
-        for e, row in enumerate(new_steps[already_loaded:]):
-            r = self.table.addRow(key="Step "+str(e+1))
-            nail1, nail2 = row
-            self.table.model.setValueAt(nail1[0][0], e, 0)
-            self.table.model.setValueAt(nail1[0][1], e, 1)
-            self.table.model.setValueAt(nail2[0][0], e, 2)
-            self.table.model.setValueAt(nail2[0][1].lower(), e, 3)
+        for e, row in enumerate(self.steps[already_loaded:]):
+            self.add_row_to_table(e, row)
         self.table.adjustColumnWidths()
         self.table.autoResizeColumns()
         self.table.redrawVisible()
-        self.steps = new_steps
+
+    def add_row_to_table(self, e, row):
+        r = self.table.addRow(key="Step "+str(e+1))
+        nail1, nail2 = row
+        self.table.model.setValueAt(str(nail1.number), e, 0)
+        self.table.model.setValueAt(nail1.direction, e, 1)
+        self.table.model.setValueAt(str(nail2.number), e, 2)
+        self.table.model.setValueAt(nail2.direction.lower(), e, 3)
+
+    def new_row(self, e, row):
+        self.add_row_to_table(e, row)
+        self.mark_current_row()
     
     def back_to_start(self):
         """User pressed back_to_start-button, and displays are reset."""
@@ -163,6 +165,8 @@ class Application(tk.Tk):
         self.mark_current_row()
         if self.mark.get() and self.current_step >= 0:
             display.draw_lines([(self.current_step, self.steps[self.current_step])], True)
+        else:
+            display.remove_marking()
     
     def place_buttons(self):
         """The play, back, to_end, to_start buttons are placed in the bottom."""
@@ -200,7 +204,7 @@ class Application(tk.Tk):
         self.table.addColumn(newname="From")
         self.table.addColumn(newname="NESW")
         self.table.addColumn(newname="to")
-        self.table.addColumn(newname="nesw")
+        self.table.addColumn(newname="nesw")            
 
     def about(self):
         """The about window, that pops up, in the help context."""
@@ -225,13 +229,13 @@ class Application(tk.Tk):
         
         self.file_menu = tk.Menu(self.menubar, tearoff=0)
         self.file_menu.add_command(label="Open file", command=self.open_file, font=self.default_font)
-        self.file_menu.add_command(label="Start/continue weaving", command=self.start, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED, font=self.default_font)
+        self.file_menu.add_command(label="Start/continue weaving", command=self.create_daemon, background=self.quargreen, activebackground=self.halfgreen, state = tk.DISABLED, font=self.default_font)
         self.file_menu.add_command(label="Reload .json file", command=self.reload_table, state = tk.DISABLED, font=self.default_font)
         self.file_menu.add_command(label="Quit", command=self.quit, background=self.quarred, activebackground=self.halfred, font=self.default_font)
         self.menubar.add_cascade(label="File", menu=self.file_menu)
         
         self.view_menu = tk.Menu(self.menubar, tearoff=0)
-        self.view_menu.add_checkbutton(label="Mark last move(s)", variable=self.mark)
+        self.view_menu.add_checkbutton(label="Mark last move(s)", variable=self.mark, command=self.mark_current)
         self.menubar.add_cascade(label="View", menu=self.view_menu)        
         
         self.help_menu = tk.Menu(self.menubar, tearoff=0)
