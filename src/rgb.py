@@ -10,35 +10,42 @@ class RGB(numpy.ndarray):
         return '#' + ''.join("00" if n < 0 else "0"+format(n, 'x') if n < 16 else format(n, 'x') if n < 256 else "FF" for n in self)
 
     def brighten(self):
-        self[:] = (4*self)/3
+        self[:] = (7*self)/6
 
     def darken(self):
-        self[:] = (3*self)/4
+        self[:] = (6*self)/7
 
 def complement(color):
     white, color = RGB.from_str("#FFFFFF"), RGB.from_str(color)
-    return str(white - color)
+    return white - color
 
 def halfway(a, b):
 	c1, c2 = RGB.from_str(a), RGB.from_str(b)
-	return str((c1 + c2) / 2)
+	return (c1 + c2) / 2
 
 def color_minus(a, b):
     c1, c2 = RGB.from_str(a), RGB.from_str(b)
-    return str(c1 - c2)
+    return c1 - c2
 
 def color_add(a, b):
     c1, c2 = RGB.from_str(a), RGB.from_str(b)
-    return str(c1 + c2)
+    return c1 + c2
 
-def color_add_unfaithful(a, b):
-    '''
-    Color b is unfaithfully added to color a. Every color channel of b is multiplied with 3/4 
-    and 30 is subtracted afterwards. (These are arbitrary values).
-    Let color b = "#FF1200" -> b = [255, 18, 0], then the summand b_unfaithful = [140, -17, -30].
-    '''
-    c1, c2 = RGB.from_str(a), RGB.from_str(b)
-    subtrahend = RGB.from_str("#1E1E1E")
-    c2.darken()
-    c2_unfaithful = c2 - subtrahend
-    return str(c1 + c2_unfaithful)
+def array_add(a, b):
+    return [a[channel]+b[channel] for channel in range(3)]
+
+def unfaithfulify(a):
+    #watch out: the return value can be negative!
+    a = RGB.from_str(a)
+    if a == "#FFFFFF":
+        subtrahend = RGB.from_str("#000000")
+    else:
+        subtrahend = RGB.from_str("#0F0F0F")
+    a.darken()
+    return a - subtrahend
+
+def score(before, additionally):
+    ret = 0
+    for channel in range(3):
+        ret += (255 - before[channel]) * additionally[channel]
+    return ret

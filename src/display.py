@@ -50,12 +50,6 @@ class my_canvas(object):
         width, height = self.start_image.width, self.start_image.height
         self.image_draw.line([(border_width, border_width), (width-border_width, border_width), (width-border_width, height-border_width), (border_width, height-border_width), (border_width, border_width)], fill="black")
 
-    def reload_from_start(self):
-        self.image = self.start_image.copy()
-        self.image_draw = ImageDraw.Draw(self.image)
-        self.photo = self.start_photo
-        self.canvas.itemconfigure('image', image=self.photo)
-
     def delete_lines(self, lines):
         self.canvas.delete("marker")
         for l in lines:
@@ -74,9 +68,9 @@ class my_canvas(object):
         x2, y2 = nail2[1][0], nail2[1][1]
         if mark and self.draw_var > 0:
             self.canvas.delete("marker")
-            self.canvas.create_line((x1, y1), (x2, y2), fill=("#FF0000"), width=3, tags="marker")
+            self.canvas.create_line((x1+border_width, y1+border_width), (x2+border_width, y2+border_width), fill=("#FF0000"), width=3, tags="marker")
         else:
-            self.canvas.create_line((x1, y1), (x2, y2), fill=("#000000"), tags="line"+str(l))
+            self.canvas.create_line((x1+border_width, y1+border_width), (x2+border_width, y2+border_width), fill=("#000000"), tags="line"+str(l))
 
 
 def load(canvasses, picture_file, nails_x, nails_y):
@@ -99,10 +93,6 @@ def destroy():
 def delete_lines(lines):
     for c in all_canvasses:
         all_canvasses[c].delete_lines(lines)
-
-def reload_from_start():
-    for c in all_canvasses:
-        all_canvasses[c].reload_from_start()
 
 def draw_lines(steps, mark=False):
     for c in all_canvasses:

@@ -29,8 +29,7 @@ class Application(tk.Tk):
         self.weave_daemon.start()
     
     def on_closing(self):
-        self.weave_daemon_finish_event.set()
-        self.weave_daemon.join(5)
+        self.weave_daemon.save_now()
         self.destroy()
     
     def init_values(self):
@@ -44,11 +43,11 @@ class Application(tk.Tk):
         self.option_add("*Font", self.default_font)
         self.main_color = self.cget('bg')
         self.red = "#BB2222"
-        self.halfred = rgb.halfway(self.main_color, self.red)
-        self.quarred = rgb.halfway(self.main_color, self.halfred)
+        self.halfred = str(rgb.halfway(self.main_color, self.red))
+        self.quarred = str(rgb.halfway(self.main_color, self.halfred))
         self.green = "#22BB22"
-        self.halfgreen = rgb.halfway(self.main_color, self.green)
-        self.quargreen = rgb.halfway(self.main_color, self.halfgreen)
+        self.halfgreen = str(rgb.halfway(self.main_color, self.green))
+        self.quargreen = str(rgb.halfway(self.main_color, self.halfgreen))
         self.x_padding = 5
         self.y_padding = 5
         self.button_padding = 10
@@ -87,9 +86,9 @@ class Application(tk.Tk):
         pass
     
     def load(self, json_file):
-        #if thread is running dump it into (old) .json_file
+        #if thread is running dump it into (old) .json_file and exit it
         #read (new) .json_file
-        #load the three canvasses
+        #load the two canvasses
         #update table content
         self.current_step = -1
         self.tframe.destroy()
@@ -105,9 +104,6 @@ class Application(tk.Tk):
             button.config(state=tk.ACTIVE)
     
     def reload_table(self, already_loaded=-1):
-        #if thread is running dump it into .json_file
-        #read .json_file
-        #update table content
         if already_loaded < 0:
             already_loaded = len(self.steps)
         new_steps = json_read_write.get_steps(self.json_file)
@@ -122,12 +118,6 @@ class Application(tk.Tk):
         self.table.autoResizeColumns()
         self.table.redrawVisible()
         self.steps = new_steps
-
-    def delete_markings(self):
-        """All special highlighted steps shall be removed, so that the user can see the picture itself again."""
-        if self.current_step >= 0:
-            display.reload_from_start()
-            display.draw_lines(self.steps[:self.current_step+1])
     
     def back_to_start(self):
         """User pressed back_to_start-button, and displays are reset."""
