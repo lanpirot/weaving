@@ -26,15 +26,15 @@ class Application(tk.Tk):
     
     def start_daemon(self):
         self.weave_daemon.json_file = self.json_file
-        if self.weave_daemon.isalive():
-            self.weave_daemon.
+        if self.weave_daemon.is_alive():
+            raise Exception("Daemon is still alive!")
             self.weave_daemon.join()
             self.weave_daemon.restart()
         else:
             self.weave_daemon.start()
     
     def on_closing(self):
-        if hasattr(self, 'weave_daemon'):
+        if self.weave_daemon.is_alive():
             self.weave_daemon.save_now()
             time.sleep(0.1)
         else:
